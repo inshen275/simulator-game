@@ -85,7 +85,7 @@ const RANDOM = {
   advisor_dinner: { title: '导师请客', cond: s => s.a.sci >= 15, text: '课题组聚餐，孙导坐在你对面。',
     choices: [{ t: '积极汇报进展', d: { sci: 3, oral: 3 }, fx: s => { aff(s, 'sun', 5); } }, { t: '埋头干饭', d: { mood: 10 } }] },
   /* ---- 竞赛 ---- */
-  teammate_slack: { title: '队友摆烂', cond: s => s.a.comp >= 15, text: '比赛前两周，一个队友说"最近要谈恋爱，没空"。',
+  teammate_slack: { title: '队友摆烂', cond: s => s.a.comp >= 15, text: '比赛前两周，一个队友说"最近要准备实习面试，没空"。',
     choices: [
       { t: '自己扛下他的部分', d: { comp: 5, mood: -10 } },
       { t: '临时换人', fx: s => { if (roll(.5)) { A(s, { comp: 3 }); return '新队友比原来的还靠谱。'; } A(s, { mood: -6 }); return '找不到人，只能三缺一硬上。'; } },
@@ -139,8 +139,6 @@ const RANDOM = {
   su_overload: { title: '学生会的深夜消息', cond: s => s.post >= 3, text: '晚上十一点，部门群里还在 @你："部长，明天活动的流程表呢？"',
     choices: [{ t: '回复并通宵改', d: { work: 4, mood: -8, kn: -2 } }, { t: '已读不回，先睡觉', d: { mood: 4, work: -2 } }] },
   /* ---- 生活 ---- */
-  breakup: { title: '分手', text: '异地恋的对象发来一句："我们还是算了吧。"',
-    choices: [{ t: '大哭一场，然后去图书馆', d: { mood: -15, kn: 3 } }, { t: '找张佛喝酒', d: { mood: -6 }, fx: s => { aff(s, 'zhang', 8); } }] },
   family_sick: { title: '家里出事了', text: '妈妈打来电话，声音很轻："你爸住院了，你别担心。"',
     choices: [
       { t: '请假回家（¥800）', req: s => s.coins >= 800, rq: '需要 ¥800', fx: s => { s.coins -= 800; apLose(s); A(s, { mood: -5 }); return '你在病房守了一周。爸爸说："你回去吧，学业要紧。"（本月行动点-1）'; } },
@@ -179,7 +177,7 @@ const RANDOM = {
       { t: '爬起来继续学', d: { kn: 3, mood: -8 } },
     ] },
   /* ---- 信息 / 政策 ---- */
-  rumor: { title: '保研群谣言', text: '保研群里有人说："今年学院名额要砍到 25 个！"群里瞬间炸了。',
+  rumor: { title: '保研群谣言', text: '保研群里有人说："今年学院名额要砍到 15 个！"群里瞬间炸了。',
     choices: [
       { t: '去问赵老师求证', fx: s => { aff(s, 'zhao', 2); return '赵老师："谣言。别瞎传。"'; } },
       { t: '跟着焦虑', d: { mood: -8 } },
@@ -187,10 +185,10 @@ const RANDOM = {
     ] },
   policy_change: { title: '推免细则修订', w: 1, cd: 99, st: [1], text: '学院发布了推免细则修订版：竞赛加分上限从 5 分降到 4 分，"学术论文须为本人第一作者"。',
     choices: [{ t: '仔细研究新细则', fx: s => { if (s.bonus > 4) s.bonus = 4; s.f.intel = 1; }, r: '你把新旧细则逐条对比了一遍。（获得【情报】）' }, { t: '影响不大，不管了', fx: s => { if (s.bonus > 4) s.bonus = 4; } }] },
-  zongce_objection: { title: '综测公示异议', cond: s => rank(s) <= 40, text: '综测公示期，有人匿名对你的一项加分提出异议。',
+  zongce_objection: { title: '综测公示异议', cond: s => rank(s) <= 30, text: '综测公示期，有人匿名对你的一项加分提出异议。',
     choices: [
       { t: '提交证明材料', fx: s => { apLose(s); return '材料齐全，异议被驳回。（本月行动点-1）'; } },
-      { t: '找李八卦打听是谁', req: s => s.aff.li >= 20, rq: '需要 李八卦好感≥20', fx: s => { aff(s, 'li', 2); A(s, { mood: -5 }); return '是排名第 31 的同学。\n你理解，又觉得有点难过。'; } },
+      { t: '找李八卦打听是谁', req: s => s.aff.li >= 20, rq: '需要 李八卦好感≥20', fx: s => { aff(s, 'li', 2); A(s, { mood: -5 }); return '是排名第 21 的同学。\n你理解，又觉得有点难过。'; } },
     ] },
   agency_call: { title: '机构的电话', cond: s => !s.f.agency, text: '"同学你好，我们是某保研机构，我们有清北导师资源，签约包过……"',
     choices: [
@@ -222,7 +220,7 @@ const RANDOM = {
   xb_speech: { title: '课堂展示', role: 'xueba', text: '老师点名让你上台做 10 分钟课堂展示。你的手心全是汗。',
     choices: [{ t: '硬着头皮上', fx: s => { A(s, { oral: 6, mood: -5 }); return '讲得磕磕巴巴，但你讲完了。'; } }, { t: '让组员去讲', d: { mood: 2 } }] },
   xb_cap: { title: '王卷卷的挑衅', role: 'xueba', text: '王卷卷："这次期中你第二，我第一。"',
-    choices: [{ t: '下次一定要赢', d: { kn: 4, mood: -8 } }, { t: '恭喜她', d: { mood: 4 }, fx: s => { aff(s, 'wang', 8); } }] },
+    choices: [{ t: '下次一定要赢', d: { kn: 4, mood: -8 } }, { t: '恭喜他', d: { mood: 4 }, fx: s => { aff(s, 'wang', 8); } }] },
   js_skip: { title: '翘课集训', role: 'jingsai', text: '教练说比赛前要连续集训两周，可这两周有三门课点名。',
     choices: [
       { t: '去集训', fx: s => { A(s, { comp: 8 }); if (roll(.3)) return failCourse(s, '马原'); A(s, { gpa: -.04 }); return '集训收获很大，但你缺了三次课。'; } },

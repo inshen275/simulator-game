@@ -49,10 +49,10 @@ function renderSide() {
     <span class="sec-title">推免硬门槛</span>
     <div class="gate">${gates(S).filter(g => g.k !== 'rank').map(g => `<span class="${g.ok ? 'ok' : 'no'}">${g.ok ? '✔' : '✘'} ${g.n.replace(/≥.*/, '')}</span>`).join('')}<span>体能 ${S.fit}</span></div>
     <div class="divider"></div>
-    <span class="sec-title">五维考核 · 参照${TIER[t]}（红线=短板线）</span>
+    ${S.m >= DIMS_FROM ? `<span class="sec-title">五维考核 · 参照${TIER[t]}（红线=短板线）</span>
     ${Object.keys(DIMS).map(k => `<div class="dim ${d[k] < MIN[t] ? 'weak' : ''}"><span>${DIMS[k]}</span><div class="track"><div class="fill" style="width:${d[k]}%"></div><div class="mk" style="left:${MIN[t]}%"></div></div><span>${d[k]}</span></div>`).join('')}
     <div class="row" style="margin-top:4px"><span>综合竞争力</span><span><b>${G(S)}</b>（${tierHint(G(S))}）</span></div>
-    <div class="divider"></div>`;
+    <div class="divider"></div>` : ''}`;
   for (const k in ATTRS) {
     const m = ATTRS[k], v = S.a[k];
     html += `<div class="stat"><div class="row"><span>${m.n}</span><span>${k === 'gpa' ? v.toFixed(2) : v}</span></div>${bar(v, m.min, k === 'mood' ? 100 : m.max, m.c)}</div>`;
@@ -117,8 +117,7 @@ function renderMain() {
       <div>你的名字：<input id="nameInput" class="name-input px" maxlength="8" value="小保"></div>
       <p style="margin:14px 0 0">选择你的身份：</p>
       <div class="roles">${ROLES.map(r => `<button class="role px" onclick="newGame('${r.id}')"><b>${r.n}</b><p>${r.d}</p>
-        <p class="pro">＋ ${r.pro}</p><p class="con">－ ${r.con}</p>
-        ${r.a ? `<p class="nums">GPA ${r.a.gpa} · 基础${r.a.kn} · 英${r.a.eng} · 表达${r.a.oral} · 研${r.a.sci} · 赛${r.a.comp} · 学工${r.a.work} · ¥${r.coins}</p>` : ''}</button>`).join('')}</div>
+        <p class="pro">＋ ${r.pro}</p>${r.con ? `<p class="con">－ ${r.con}</p>` : ''}</button>`).join('')}</div>
       <button class="btn small px" style="margin-top:22px" onclick="screen='title';render()">← 返回</button>`;
     return;
   }
