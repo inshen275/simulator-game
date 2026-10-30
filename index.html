@@ -7,100 +7,121 @@
 <style>
 *{box-sizing:border-box}
 :root{
-  --ink:#22223b;--paper:#f2e8cf;--paper2:#e6d7b0;--bg:#1d1b33;
+  --ink:#1f1d36;--ink2:#3f3a64;--paper:#f6ecd2;--paper2:#ead9b1;--paper3:#dcc690;--bg:#17152b;
   --red:#e94560;--green:#43aa8b;--yellow:#f9c74f;--blue:#4d96ff;--purple:#9b5de5;--orange:#f8961e;--teal:#2ec4b6;--pink:#ff70a6;
+  --hl:rgba(255,255,255,.45);--sh:rgba(0,0,0,.18);
+  --font:"Microsoft YaHei","PingFang SC","Noto Sans SC","Hiragino Sans GB",system-ui,sans-serif;
+  --pxfont:Consolas,"Courier New",monospace;
 }
 html,body{margin:0;min-height:100vh}
 body{
-  background:var(--bg);color:var(--ink);
-  font-family:"Zpix","Fusion Pixel","SimSun","宋体","NSimSun","Courier New",monospace;
-  font-size:16px;line-height:1.7;-webkit-font-smoothing:none;
-  background-image:linear-gradient(rgba(255,255,255,.04) 2px,transparent 2px),linear-gradient(90deg,rgba(255,255,255,.04) 2px,transparent 2px);
-  background-size:24px 24px;
+  background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.75;
+  background-image:
+    radial-gradient(circle at 20% 10%,rgba(155,93,229,.18),transparent 40%),
+    radial-gradient(circle at 85% 90%,rgba(233,69,96,.14),transparent 40%),
+    linear-gradient(rgba(255,255,255,.035) 2px,transparent 2px),linear-gradient(90deg,rgba(255,255,255,.035) 2px,transparent 2px);
+  background-size:auto,auto,24px 24px,24px 24px;
 }
-body::after{content:"";pointer-events:none;position:fixed;inset:0;
-  background:repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 2px,transparent 2px 4px);z-index:99}
+body::after{content:"";pointer-events:none;position:fixed;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.03) 0 2px,transparent 2px 4px);z-index:99}
 button,input{font:inherit;color:inherit}
-canvas{image-rendering:pixelated}
+canvas{image-rendering:pixelated;image-rendering:crisp-edges}
 
-/* 像素描边：缺角边框 */
-.px{box-shadow:0 -4px 0 0 var(--ink),0 4px 0 0 var(--ink),-4px 0 0 0 var(--ink),4px 0 0 0 var(--ink),
-  inset -4px -4px 0 0 rgba(0,0,0,.12),inset 4px 4px 0 0 rgba(255,255,255,.35)}
-.panel{background:var(--paper);padding:16px 18px}
+/* 像素描边：缺角 + 内高光 + 外投影 */
+.px{position:relative;box-shadow:
+  0 -4px 0 0 var(--ink),0 4px 0 0 var(--ink),-4px 0 0 0 var(--ink),4px 0 0 0 var(--ink),
+  4px 8px 0 0 rgba(0,0,0,.35),8px 4px 0 0 rgba(0,0,0,.35),
+  inset -4px -4px 0 0 var(--sh),inset 4px 4px 0 0 var(--hl)}
+.panel{background:var(--paper);padding:18px 20px}
 
-#app{max-width:1120px;margin:0 auto;padding:20px 16px 40px}
-.topbar{display:flex;justify-content:space-between;align-items:center;background:var(--red);color:#fff;padding:10px 16px;margin-bottom:22px}
-.logo{font-size:20px;letter-spacing:2px;text-shadow:2px 2px 0 var(--ink)}
-.top-btns{display:flex;gap:12px}
-.layout{display:grid;grid-template-columns:290px 1fr;gap:22px;align-items:start}
-@media (max-width:760px){.layout{grid-template-columns:1fr}}
+#app{max-width:1180px;margin:0 auto;padding:20px 16px 40px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--red);color:#fff;padding:10px 16px;margin-bottom:26px;flex-wrap:wrap}
+.logo{font-family:var(--pxfont);font-size:14px;font-weight:bold;letter-spacing:1px;text-shadow:2px 2px 0 var(--ink)}
+.logo span{font-family:var(--font);font-size:19px;margin-left:8px}
+.top-btns{display:flex;gap:14px}
+.layout{display:grid;grid-template-columns:300px 1fr;gap:26px;align-items:start}
+@media (max-width:820px){.layout{grid-template-columns:1fr}}
 
-.btn{display:block;width:100%;text-align:left;border:0;cursor:pointer;padding:10px 14px;margin:12px 0;
-  background:var(--yellow);transition:transform .05s}
+.btn{display:block;width:100%;text-align:left;border:0;cursor:pointer;padding:10px 14px;margin:14px 0;background:var(--yellow);color:var(--ink);transition:transform .05s}
 .btn:hover{transform:translate(-2px,-2px);background:#ffd96b}
-.btn:active{transform:translate(2px,2px)}
-.btn.small{display:inline-block;width:auto;margin:0;padding:4px 12px;font-size:14px;background:var(--paper);color:var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:0 -4px 0 0 var(--ink),0 4px 0 0 var(--ink),-4px 0 0 0 var(--ink),4px 0 0 0 var(--ink),inset 4px 4px 0 0 var(--sh)}
+.btn.small{display:inline-block;width:auto;margin:0;padding:3px 12px;font-size:14px;background:var(--paper)}
 .btn.center{text-align:center}
-.btn.locked,.btn:disabled{background:#bbb;color:#666;cursor:not-allowed;transform:none}
-.btn .hint{float:right;font-size:13px;opacity:.75}
-.btn .key{display:inline-block;background:var(--ink);color:var(--yellow);padding:0 6px;margin-right:8px}
+.btn.alt{background:var(--paper2)}
+.btn.locked,.btn:disabled{background:#b9b2a0;color:#6b6457;cursor:not-allowed;transform:none}
+.btn .hint{float:right;font-size:13px;opacity:.8;margin-left:8px}
+.btn .key{display:inline-block;background:var(--ink);color:var(--yellow);padding:0 6px;margin-right:10px;font-family:var(--pxfont);font-size:13px;font-weight:bold;line-height:20px}
 
 /* 侧栏 */
-.avatar-box{display:flex;gap:14px;align-items:center;margin-bottom:10px}
-#avatar{background:var(--paper2);width:96px;height:96px}
-.who b{font-size:18px}
+.avatar-box{display:flex;gap:14px;align-items:center;margin-bottom:12px}
+#avatar{background:linear-gradient(var(--paper3),var(--paper2));width:96px;height:96px;flex:none}
+.who b{font-size:19px}
 .who div{font-size:13px}
-.stat{margin:6px 0}
-.row{display:flex;justify-content:space-between;font-size:14px}
+.badge{display:inline-block;background:var(--ink);color:var(--yellow);font-size:12px;padding:0 6px;margin-top:2px}
+.badge.post{background:var(--red);color:#fff}
+.stat{margin:4px 0}
+.row{display:flex;justify-content:space-between;gap:8px;font-size:14px}
 .bar{display:flex;gap:2px;margin-top:2px}
-.seg{flex:1;height:10px;background:rgba(0,0,0,.12)}
-.divider{height:4px;background:var(--ink);margin:10px 0;opacity:.8}
+.seg{flex:1;height:9px;background:rgba(0,0,0,.12)}
+.divider{height:4px;background:var(--ink);margin:12px 0;opacity:.85}
+.sec-title{font-size:13px;background:var(--ink);color:var(--paper);display:inline-block;padding:0 8px;margin:4px 0 6px}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .tag{font-size:12px;padding:0 6px;background:var(--ink);color:var(--paper)}
-.tag.g{background:var(--green);color:#fff}.tag.r{background:var(--red);color:#fff}.tag.y{background:var(--yellow);color:var(--ink)}
+.tag.g{background:var(--green);color:#fff}.tag.r{background:var(--red);color:#fff}.tag.y{background:var(--yellow);color:var(--ink)}.tag.b{background:var(--blue);color:#fff}
 .warn{color:var(--red);font-size:13px;animation:blink 1s steps(2) infinite}
 .rankbox{background:var(--ink);color:var(--paper);padding:8px 10px;margin:8px 0}
-.rankbox .big{font-size:22px;color:var(--yellow)}
+.rankbox .big{font-size:24px;color:var(--yellow)}
 .up{color:var(--green)}.down{color:var(--red)}
 .rankbox .up{color:#7ee2b8}.rankbox .down{color:#ff8fa3}
-#rankChart{width:100%;height:48px;background:rgba(255,255,255,.08);margin-top:4px}
-.money{font-size:18px}
+#rankChart{width:100%;height:48px;background:rgba(255,255,255,.06);margin-top:4px}
+.money{font-size:18px;color:var(--ink)}
+.gate{display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;font-size:12px}
+.gate span.ok{color:var(--green)}.gate span.no{color:var(--red)}
+.dim{display:grid;grid-template-columns:62px 1fr 28px;align-items:center;gap:6px;font-size:13px;margin:2px 0}
+.dim .track{position:relative;height:10px;background:rgba(0,0,0,.12)}
+.dim .fill{position:absolute;left:0;top:0;bottom:0;background:var(--blue)}
+.dim .mk{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--red)}
+.dim.weak .fill{background:var(--red);animation:blink 1s steps(2) infinite}
 
 /* 主面板 */
 .stage-label{display:inline-block;background:var(--ink);color:var(--yellow);padding:0 8px;font-size:13px}
+.ev-tag{display:inline-block;color:#fff;padding:0 8px;font-size:13px;margin-left:8px}
 .progress{display:flex;gap:3px;margin:8px 0 14px}
-.progress i{flex:1;height:8px;background:rgba(0,0,0,.15)}
+.progress i{flex:1;height:8px;background:rgba(0,0,0,.14)}
 .progress i.on{background:var(--red)}
-h2{margin:6px 0 10px;font-size:22px}
-.story{white-space:pre-wrap;min-height:80px;cursor:pointer}
+.progress i.now{background:var(--yellow);animation:blink 1s steps(2) infinite}
+h2{margin:6px 0 10px;font-size:23px}
+.scene{display:block;width:100%;height:auto;aspect-ratio:4/1;margin:4px 0 12px;background:var(--ink)}
+.story{white-space:pre-wrap;min-height:80px;cursor:pointer;background:rgba(255,255,255,.35);padding:10px 12px;border-left:4px solid var(--ink)}
 .cursor::after{content:"▌";animation:blink .8s steps(2) infinite}
 @keyframes blink{50%{opacity:0}}
 .choices{animation:fadein .25s steps(4)}
 @keyframes fadein{from{opacity:0}to{opacity:1}}
 .deltas{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
 .delta{padding:1px 8px;font-size:14px;color:#fff}
-.delta.up{background:var(--green);color:#fff}.delta.down{background:var(--red);color:#fff}
+.delta.up{background:var(--green)}.delta.down{background:var(--red)}
 .chosen{font-size:14px;opacity:.75;margin-bottom:6px}
 .shake{animation:shake .3s steps(3)}
 @keyframes shake{25%{transform:translate(-6px,0)}50%{transform:translate(6px,0)}75%{transform:translate(-3px,0)}}
 
 /* 月度计划 */
-.plan-head{display:flex;flex-wrap:wrap;gap:16px;align-items:center;background:var(--ink);color:var(--paper);padding:8px 12px;margin-bottom:14px}
+.plan-head{display:flex;flex-wrap:wrap;gap:16px;align-items:center;background:var(--ink);color:var(--paper);padding:8px 12px;margin-bottom:16px}
 .plan-head b{color:var(--yellow)}
-.ap i{display:inline-block;width:14px;height:14px;margin-right:3px;background:var(--yellow)}
+.ap i{display:inline-block;width:14px;height:14px;margin-right:3px;background:var(--yellow);box-shadow:inset -2px -2px 0 rgba(0,0,0,.25)}
 .ap i.off{background:#555}
-.tabs{display:flex;gap:12px;margin-bottom:12px}
+.tabs{display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap}
 .tab{border:0;cursor:pointer;padding:4px 16px;background:var(--paper2)}
 .tab.on{background:var(--red);color:#fff}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.cat{font-size:13px;margin:14px 0 8px;color:var(--ink2)}
+.cat::before{content:"■ ";color:var(--red)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
 .act{border:0;cursor:pointer;text-align:left;background:var(--paper2);padding:8px 10px}
 .act:hover:not(:disabled){background:var(--yellow);transform:translate(-2px,-2px)}
 .act:disabled{opacity:.45;cursor:not-allowed}
 .act b{font-size:15px}
 .act .cost{float:right;font-size:12px;background:var(--ink);color:var(--yellow);padding:0 5px}
 .act p{margin:2px 0 0;font-size:12px}
-.feed{margin-top:14px;font-size:13px;background:rgba(0,0,0,.06);padding:8px 10px;max-height:160px;overflow:auto}
-.feed div{border-bottom:2px dashed rgba(0,0,0,.1);padding:2px 0}
+.feed{margin-top:16px;font-size:13px;background:rgba(0,0,0,.06);padding:8px 10px;max-height:170px;overflow:auto}
+.feed>div{border-bottom:2px dashed rgba(0,0,0,.1);padding:2px 0}
 .feed .deltas{margin:2px 0}
 .feed .delta{font-size:12px}
 
@@ -113,51 +134,60 @@ h2{margin:6px 0 10px;font-size:22px}
 .npc-btns{display:flex;gap:10px;margin-top:8px}
 .npc-btns button{flex:1;border:0;cursor:pointer;background:var(--yellow);padding:2px 4px;font-size:13px}
 .npc-btns button:disabled{background:#bbb;cursor:not-allowed}
-.agency{background:var(--paper2);padding:12px;margin-bottom:14px}
+.agency{background:var(--paper2);padding:12px;margin-bottom:16px}
 .agency .price{color:var(--red);font-size:20px}
 
 /* 标题页 */
-.title-screen{text-align:center;padding:30px 10px}
-.big-title{font-size:56px;color:var(--red);letter-spacing:6px;margin:10px 0;
-  text-shadow:4px 4px 0 var(--yellow),8px 8px 0 var(--ink)}
-.sub-title{color:var(--ink);letter-spacing:3px}
-.press{margin-top:20px;animation:blink 1.2s steps(2) infinite}
-.menu{max-width:320px;margin:24px auto 0}
-.roles{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-top:14px}
+.title-screen{text-align:center;padding:20px 10px}
+#titleArt{width:100%;max-width:560px;height:auto;aspect-ratio:7/2}
+.big-title{font-size:52px;font-weight:900;color:var(--red);letter-spacing:6px;margin:6px 0;text-shadow:3px 3px 0 var(--ink)}
+.sub-title{letter-spacing:3px}
+.en{font-family:var(--pxfont);font-size:13px;font-weight:bold;letter-spacing:3px}
+.press{margin-top:20px;animation:blink 1.2s steps(2) infinite;font-family:var(--pxfont);font-size:13px;font-weight:bold;letter-spacing:2px}
+.menu{max-width:320px;margin:20px auto 0}
+.roles{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px;margin-top:14px}
 .role{cursor:pointer;background:var(--paper2);padding:12px;border:0;text-align:left}
-.role:hover{background:var(--yellow);transform:translate(-2px,-2px)}
-.role b{font-size:17px}
+.role:hover{background:#fff3c4;transform:translate(-2px,-2px)}
+.role b{font-size:18px}
 .role p{margin:4px 0 0;font-size:13px}
+.role .pro{color:#257a5f}.role .con{color:#b3253f}
+.role .nums{font-size:12px;opacity:.75}
 .name-input{background:#fff;border:0;padding:6px 10px;width:180px;margin-left:8px}
 
 /* 日志 */
-#logbox{margin-top:22px;max-height:220px;overflow:auto;font-size:13px}
+#logbox{margin-top:26px;max-height:220px;overflow:auto;font-size:13px}
 #logbox h3{margin:0 0 6px;font-size:15px}
 .log-item{border-bottom:2px dashed rgba(0,0,0,.15);padding:3px 0}
 .log-item span{color:var(--red)}
 
 /* 结局 */
 .ending{text-align:center}
-.rarity{display:inline-block;padding:2px 14px;color:#fff;font-size:18px;margin:6px 0}
-.ending h2{font-size:32px;margin:10px 0;text-shadow:3px 3px 0 var(--yellow)}
-.ending .desc{text-align:left;white-space:pre-wrap;background:var(--paper2);padding:12px;margin:14px 0}
+.rarity{display:inline-block;padding:2px 16px;color:#fff;margin:8px 0;font-family:var(--pxfont);font-size:18px;font-weight:bold;line-height:28px}
+.rarity.SSR{animation:glow 1.2s steps(3) infinite}
+@keyframes glow{0%{filter:brightness(1)}50%{filter:brightness(1.4)}100%{filter:brightness(1)}}
+.ending h2{font-size:32px;margin:10px 0;text-shadow:2px 2px 0 var(--yellow)}
+.ending .desc{text-align:left;white-space:pre-wrap;background:var(--paper2);padding:12px;margin:16px 0}
+.shot-wrap{background:var(--ink);padding:10px;margin:16px 0}
+#offerShot{width:100%;height:auto;image-rendering:auto;display:block}
+.shot-cap{color:var(--paper);font-size:12px;margin-top:6px}
 .summary{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin:12px 0;font-size:14px}
 .summary div{background:var(--ink);color:var(--paper);padding:4px}
 
 /* 弹窗 */
-#modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
 #modal[hidden]{display:none}
-#modal .panel{max-width:680px;width:100%;max-height:85vh;overflow:auto}
-.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin:12px 0}
+#modal .panel{max-width:720px;width:100%;max-height:86vh;overflow:auto}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin:14px 0}
 .g-item{background:var(--paper2);padding:8px;font-size:13px}
-.g-item b{font-size:15px}
+.g-item b{font-size:14px}
 .g-item.lock{opacity:.5}
+.help p{font-size:14px;margin:6px 0}
 </style>
 </head>
 <body>
 <div id="app">
   <header class="topbar px">
-    <div class="logo">★ 保研模拟器 ★</div>
+    <div class="logo">BAOYAN SIM<span>保研模拟器</span></div>
     <div class="top-btns">
       <button class="btn small px" id="btnGallery">结局图鉴</button>
       <button class="btn small px" id="btnMenu">菜单</button>
@@ -171,1040 +201,11 @@ h2{margin:6px 0 10px;font-size:22px}
 </div>
 <div id="modal" hidden><div class="panel px" id="modalBody"></div></div>
 
-<script>
-/* ============ 基础 ============ */
-const KEY = 'baoyan-sim-save-v2';
-const GKEY = 'baoyan-sim-endings-v2';
-const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
-const roll = p => Math.random() < p;
-const pick = arr => arr[Math.floor(Math.random() * arr.length)];
-const sig = x => 1 / (1 + Math.exp(-x));
-const $ = id => document.getElementById(id);
-const val = (x, s) => typeof x === 'function' ? x(s) : x;
-
-const N = 120, QUOTA = 36;   // 专业人数 / 推免名额
-const ALLOWANCE = 600;       // 每月生活费结余
-
-const ATTRS = {
-  gpa:    { n: 'GPA',  min: 1.5, max: 4.0, c: 'var(--blue)' },
-  kn:     { n: '基础', min: 0, max: 100, c: 'var(--teal)' },
-  eng:    { n: '英语', min: 0, max: 100, c: 'var(--yellow)' },
-  sci:    { n: '科研', min: 0, max: 100, c: 'var(--purple)' },
-  comp:   { n: '竞赛', min: 0, max: 100, c: 'var(--orange)' },
-  intern: { n: '实习', min: 0, max: 100, c: 'var(--pink)' },
-  mood:   { n: '心态', min: 0, max: 100, c: 'var(--green)' },
-};
-const LABEL = { rank: '排名', gpa: 'GPA', kn: '基础', eng: '英语', sci: '科研', comp: '竞赛', intern: '实习', mood: '心态', coins: '金币', bonus: '加分', zhenti: '真题' };
-
-const ROLES = [
-  { id: 'xueba', n: '卷王学霸', d: '绩点就是生命线，图书馆座位是你的第二张床。', a: { gpa: 3.72, kn: 45, eng: 60, sci: 8, comp: 8, intern: 0, mood: 55 }, coins: 1500, bonus: 0 },
-  { id: 'jingsai', n: '竞赛狂魔', d: '代码和建模才是浪漫。大二已有一个省奖。', a: { gpa: 3.4, kn: 30, eng: 45, sci: 12, comp: 40, intern: 0, mood: 70 }, coins: 1500, bonus: 1.5 },
-  { id: 'keyan', n: '科研萌新', d: '大二就进了组，虽然主要负责拿外卖。', a: { gpa: 3.5, kn: 35, eng: 50, sci: 30, comp: 5, intern: 0, mood: 65 }, coins: 1500, bonus: 0 },
-  { id: 'foxi', n: '佛系青年', d: '保研？随缘。心态全场最佳，家里给的生活费也多一点。', a: { gpa: 3.3, kn: 25, eng: 50, sci: 5, comp: 5, intern: 5, mood: 95 }, coins: 3000, bonus: 0 },
-  { id: 'random', n: '随机人生', d: '命运的骰子替你决定一切。', a: null },
-];
-
-const NPCS = [
-  { id: 'wang', n: '王卷卷', type: '同学', color: 'var(--blue)', aff: 10, d: '同专业绩点第一，图书馆座位永远在你斜对面。',
-    perks: [[40, '好感≥40：成为学习搭子（自习收益提升）']] },
-  { id: 'li', n: '李八卦', type: '同学', color: 'var(--orange)', aff: 15, d: '全年级的消息都会经过这里，也很爱打听别人的消息。',
-    perks: [[20, '好感≥20：可以反向打听情报'], [40, '好感≥40：透露预推免内部消息']] },
-  { id: 'zhang', n: '张佛', type: '室友', color: 'var(--green)', aff: 20, d: '你的室友，信奉"一切随缘"，心态稳如老狗。',
-    perks: [[40, '好感≥40：学会松弛感（休息收益提升）']] },
-  { id: 'chen', n: '陈学姐', type: '学姐', color: 'var(--purple)', aff: 15, d: '你的直系学姐，去年保研去了华五，在本院实验室带大创。',
-    perks: [[25, '好感≥25：10月邀请你做【大创】'], [30, '好感≥30：赠送保研真题×1']], proj: 1 },
-  { id: 'liu', n: '刘学长', type: '学长', color: 'var(--red)', aff: 5, d: '挑战杯国奖得主，竞赛圈的传说。',
-    perks: [[25, '好感≥25：3月邀请你冲【挑战杯】'], [30, '好感≥30：赠送机试真题×1']], proj: 6 },
-  { id: 'zhou', n: '周学姐', type: '学姐', color: 'var(--pink)', aff: 5, d: '创业达人，正在组【互联网+】团队。',
-    perks: [[25, '好感≥25：5月邀请你加入【互联网+】'], [30, '好感≥30：赠送面试真题×1']], proj: 8 },
-];
-const npc = id => NPCS.find(n => n.id === id);
-const SENIORS = ['chen', 'liu', 'zhou'];
-
-const TIER = ['', '清北', '华五/顶尖985', '中流985', '211/本校'];
-const TH = [0, 75, 62, 50, 38];
-const COST = [0, 1600, 1300, 900, 200];   // 机票 + 酒店
-
-const STAGES = [
-  { name: '大三上', sub: '第一阶段 · 开局', desc: '九月，梧桐叶还没黄。保研倒计时一年。\n专业 120 人，推免名额 36 个——你的排名，从今天开始每个月都在变化。' },
-  { name: '大三下', sub: '第二阶段 · 积累', desc: '寒假过后，身边的人开始悄悄"上分"。\n论文、竞赛、绩点、实习、钱包……时间只有这么多，你必须做出取舍。' },
-  { name: '暑期夏令营', sub: '第三阶段 · 夏令营', desc: '各校夏令营轮番开放。\n机票、酒店都要自掏腰包——钱包和前途，你得一起算。' },
-  { name: '大四上', sub: '第四阶段 · 预推免', desc: '推免资格即将公示，预推免进入白热化。\n名额、候补、鸽子……保研江湖，险恶得很。' },
-  { name: '九推', sub: '最终阶段 · 九推', desc: '9 月 28 日，推免服务系统开放。\n一年的努力，将在今晚尘埃落定。' },
-];
-
-const MONTHS = [
-  { n: '大三上 · 9月', st: 0, ap: 3, ev: ['opening'] },
-  { n: '大三上 · 10月', st: 0, ap: 3, ev: ['proj_chen'] },
-  { n: '大三上 · 11月', st: 0, ap: 3, ev: ['ask_li'] },
-  { n: '大三上 · 12月', st: 0, ap: 3, ev: ['cet6', 'ask_wang'] },
-  { n: '大三上 · 1月', st: 0, ap: 2, ev: ['final1'] },
-  { n: '寒假 · 2月', st: 1, ap: 4, ev: ['winter'] },
-  { n: '大三下 · 3月', st: 1, ap: 3, ev: ['proj_liu'] },
-  { n: '大三下 · 4月', st: 1, ap: 3, ev: ['paper', 'ask_li2'] },
-  { n: '大三下 · 5月', st: 1, ap: 3, ev: ['proj_zhou', 'cv', 'ask_wang2'] },
-  { n: '大三下 · 6月', st: 1, ap: 2, ev: ['final2', 'camp_apply'] },
-  { n: '暑假 · 7月', st: 2, ap: 2, ev: ['camp_travel', 'camp_interview'] },
-  { n: '暑假 · 8月', st: 2, ap: 2, ev: ['after_camp'] },
-  { n: '大四上 · 9月上旬', st: 3, ap: 1, ev: ['qual', 'prepush_mode', 'prepush'] },
-  { n: '大四上 · 9月中旬', st: 3, ap: 1, ev: ['drama'] },
-  { n: '九推 · 9月28日', st: 4, ap: 0, ev: ['ninepush'] },
-];
-
-/* ============ 数值 ============ */
-function A(s, d) {
-  for (const k in d) {
-    const m = ATTRS[k];
-    const v = clamp(s.a[k] + d[k], m.min, m.max);
-    s.a[k] = k === 'gpa' ? Math.round(v * 100) / 100 : Math.round(v);
-  }
-}
-// 边际递减的成长
-function grow(s, k, base) { A(s, { [k]: Math.max(1, Math.round(base * (1 - s.a[k] / 130))) }); }
-function aff(s, id, d) { s.aff[id] = clamp(s.aff[id] + d, 0, 100); }
-
-// 推免排名分 = GPA 折算 + 竞赛/科研加分；同学们也在进步，平均线逐月上移
-function tui(s) { return s.a.gpa * 22.5 + s.bonus; }
-function classMean(s) { return 78 + s.m * .15 + (s.f.rival || 0) * .4; }
-function Phi(z) { return sig(1.702 * z); }
-function rank(s) { return clamp(Math.round((1 - Phi((tui(s) - classMean(s)) / 5)) * N) + 1, 1, N); }
-function lineGpa(s) { const p = 1 - (QUOTA - 1) / N; return (classMean(s) + Math.log(p / (1 - p)) / 1.702 * 5) / 22.5; }
-function qualified(s) { return rank(s) <= QUOTA; }
-
-function score(s) {
-  const a = s.a, f = s.f;
-  let x = (a.gpa - 2.8) / 1.2 * 40 + a.eng * .15 + a.sci * .25 + a.comp * .2 + s.bonus * 1.5;
-  if (f.paper) x += 6;
-  if (f.cv) x += 3;
-  if (f.cet6) x += 2;
-  return Math.max(0, Math.round(x));
-}
-function ivBonus(s) { return Math.min(s.zhenti, 3) * 3 + (s.f.agency === 2 ? 5 : 0); }
-function chance(s, t, b = 0) {
-  let p = sig((score(s) + ivBonus(s) + b - TH[t]) / 5);
-  if (s.a.mood < 30) p *= .8;
-  return clamp(p, .03, .97);
-}
-function hint(p) { return p > .7 ? '把握较大' : p > .4 ? '有希望' : p > .15 ? '很悬' : '做梦'; }
-function tierHint(sc) { return sc >= TH[1] ? '清北有戏' : sc >= TH[2] ? '华五可冲' : sc >= TH[3] ? '985稳中求进' : sc >= TH[4] ? '保底无忧' : '危险边缘'; }
-function best(s) { return s.offers.length ? Math.min(...s.offers) : 0; }
-function gain(s, t) { if (!s.offers.includes(t)) s.offers.push(t); }
-function campCost(s, t) { return s.f.reimb && s.f.reimb.includes(t) ? Math.round(COST[t] * .3) : COST[t]; }
-function maxSenior(s) { return Math.max(...SENIORS.map(id => s.aff[id])); }
-
-// 考研 / 出国 / 求职
-function kyP(s, th, b = 0) { let p = sig((s.a.kn + b - th) / 6); if (s.a.mood < 30) p *= .8; return clamp(p, .03, .95); }
-function abroadScore(s, b = 0) { return (s.a.gpa - 3) * 40 + (s.a.eng - 50) * .8 + s.a.sci * .2 + s.a.intern * .1 + (s.f.paper ? 5 : 0) + b; }
-
-function snap(s) { return { rank: rank(s), ...s.a, coins: s.coins, bonus: s.bonus, zhenti: s.zhenti }; }
-function diffs(b, s) {
-  const a = snap(s), out = [];
-  for (const k in a) {
-    const d = a[k] - b[k];
-    if (Math.abs(d) < .001) continue;
-    if (k === 'rank') out.push({ t: `排名 ${d < 0 ? '▲' : '▼'}${Math.abs(d)}`, up: d < 0 });
-    else out.push({ t: `${LABEL[k]} ${d > 0 ? '+' : ''}${k === 'gpa' ? d.toFixed(2) : k === 'bonus' ? d.toFixed(1) : d}`, up: d > 0 });
-  }
-  return out;
-}
-const dtxt = ds => ds.map(d => d.t).join(' ');
-
-/* ============ 剧情事件 ============ */
-const EV = {
-  /* ---- 大三上 ---- */
-  opening: { title: '开学第一周',
-    text: '大三开学了。辅导员在年级群里说："今年推免名额 36 个，按综合排名（GPA + 竞赛科研加分）。"\n\n从现在起，你每个月有若干【行动点】，可以学习、科研、竞赛、兼职、实习，或在【社交】页和同学、学长学姐搞好关系。\n\n小道消息：直系陈学姐下个月要带大创，好感≥25 才会带你。',
-    choices: [
-      { t: '给直系陈学姐发消息请教', fx: s => { aff(s, 'chen', 12); }, r: '陈学姐回得很快："有问题随时问我~"\n（陈学姐好感 +12）' },
-      { t: '去李八卦那儿打听今年的政策', fx: s => { aff(s, 'li', 10); }, r: '李八卦滔滔不绝地讲了半小时，你记住了三分之一。\n（李八卦好感 +10）' },
-      { t: '给自己定个目标，贴在床头', d: { mood: 8 }, r: '"一年后，顶峰相见。"' },
-    ] },
-  proj_chen: { title: '大创立项',
-    text: s => s.aff.chen >= 25
-      ? '陈学姐找到你："我们组有个大创项目缺人，要不要一起？不过会占用你一些时间哦。"'
-      : `学院开始申报大创项目。你和陈学姐还不太熟（好感 ${s.aff.chen}/25），只能自己想办法。`,
-    choices: s => [
-      ...(s.aff.chen >= 25 ? [{ t: '跟着学姐做', h: '下月行动点-1', fx: s => {
-        s.apPenalty++; A(s, { sci: 8, mood: -4 }); aff(s, 'chen', 8);
-        if (roll(.75)) { s.f.dachuang = 1; s.bonus += 1.5; A(s, { sci: 5 }); return '学姐带飞，国家级立项！\n推免加分 +1.5'; }
-        s.bonus += .5; return '拿到了校级立项。推免加分 +0.5'; } }] : []),
-      { t: '自己当负责人申报', h: '下月行动点-1', fx: s => {
-        s.apPenalty++; A(s, { sci: 6, comp: 3, mood: -6 });
-        if (roll(.2 + s.a.sci / 200)) { s.f.dachuang = 1; s.bonus += 1.5; return '你熬夜写完申报书——国家级立项！\n推免加分 +1.5'; }
-        return '答辩时被评委问住了，没能立项。'; } },
-      { t: '不参加', d: { mood: 4 }, r: '你把时间留给了自己。' },
-    ] },
-  ask_li: { title: '李八卦的打听', tag: '社交',
-    text: s => `李八卦端着奶茶凑过来："诶，你绩点现在多少呀？竞赛有加分吗？听说今年名额就 36 个，大家都在算呢~"\n\n（你目前：GPA ${s.a.gpa.toFixed(2)}，加分 ${s.bonus.toFixed(1)}，排名第 ${rank(s)} 名）`,
-    choices: s => askLiChoices(s) },
-  ask_li2: { title: '李八卦又来了', tag: '社交',
-    text: s => `"上次说的排名你还记得吗？最近又变了哦！"李八卦神秘兮兮地说，"你现在绩点多少？有没有新的竞赛加分？"\n\n（你目前排名第 ${rank(s)} 名，加分 ${s.bonus.toFixed(1)}）`,
-    choices: s => askLiChoices(s) },
-  ask_wang: { title: '王卷卷的比较', tag: '社交',
-    text: '王卷卷在自习室门口拦住你："你竞赛加分有几分？绩点多少？我算了一下排名，我们俩……"',
-    choices: s => askWangChoices(s) },
-  ask_wang2: { title: '王卷卷又在算分', tag: '社交',
-    text: '王卷卷拿着一张 Excel 表："夏令营前最后一次核对——你现在加分多少？"',
-    choices: s => askWangChoices(s) },
-  cet6: { title: '六级考试',
-    text: s => `十二月的六级考试近在眼前。你的英语水平目前是 ${s.a.eng}。`,
-    choices: [
-      { t: '每天一套真题，死磕高分', fx: s => { A(s, { mood: -6 });
-          if (roll(.35 + s.a.eng / 150)) { A(s, { eng: 10 }); s.f.cet6 = 1; return '出分了：586！简历上英语这一栏终于好看了。'; }
-          A(s, { eng: 5 }); return '出分 452。过是过了，但写在简历上有点心虚。'; } },
-      { t: '裸考，相信语感', fx: s => {
-          if (roll(s.a.eng / 110)) { A(s, { eng: 5, mood: 6 }); return '语感救了你，530 分！'; }
-          A(s, { mood: -10 }); return '424 分。差一分。你盯着成绩单看了很久。'; } },
-      { t: '弃考，雅思托福才是未来', d: { mood: 4 }, r: '你安慰自己：真正的强者不需要六级。' },
-    ] },
-  final1: { title: '期末周',
-    text: '期末周来临，图书馆一座难求。这学期的成绩直接计入推免排名。',
-    choices: s => [
-      { t: '连续通宵，背到天亮', d: { gpa: .12, kn: 5, mood: -15 }, r: '你见过凌晨四点的自习室。' },
-      { t: '按正常节奏复习', d: { gpa: .05, kn: 3, mood: -3 }, r: '不功不过，稳稳当当。' },
-      { t: '借王卷卷的笔记', req: s => s.aff.wang >= 25, rq: '需要 王卷卷好感≥25', d: { gpa: .09, mood: -2 }, fx: s => { aff(s, 'wang', 3); }, r: '王卷卷的笔记工整得像印刷品。' },
-      { t: '开摆，及格万岁', d: { gpa: -.12, mood: 12 }, r: '寒假提前开始了——在你的心里。' },
-    ] },
-
-  /* ---- 大三下 ---- */
-  winter: { title: '寒假计划',
-    text: '寒假有一个多月，这个月行动点比较多。美赛就在二月，要参加吗？',
-    choices: [
-      { t: '组队打美赛', h: '本月行动点-1', fx: s => { s.ap = Math.max(0, s.ap - 1); A(s, { comp: 6, mood: -8 });
-          if (roll(.25 + s.a.comp / 120)) { s.f.award = 1; s.bonus += 2; A(s, { comp: 10 }); return '四天三夜，结果出来：M 奖！\n推免加分 +2'; }
-          s.bonus += .5; return '四天三夜，H 奖。推免加分 +0.5'; } },
-      { t: '报个寒假雅思班', h: '¥2000', req: s => s.coins >= 2000, rq: '需要 ¥2000', fx: s => { s.coins -= 2000; A(s, { eng: 14, mood: -4 }); }, r: '口语老师说你的发音"很有特色"。' },
-      { t: '回家过年，好好休息', d: { mood: 15 }, r: '你吃胖了三斤，精神焕发。' },
-    ] },
-  proj_liu: { title: '挑战杯',
-    text: s => s.aff.liu >= 25
-      ? '刘学长发来消息："今年挑战杯我带队冲国奖，缺一个能干活的，来不来？"'
-      : `挑战杯校赛开始报名。你和刘学长不太熟（好感 ${s.aff.liu}/25），没被拉进他的队伍。`,
-    choices: s => [
-      ...(s.aff.liu >= 25 ? [{ t: '跟着刘学长冲国奖', h: '下月行动点-1', fx: s => {
-        s.apPenalty++; A(s, { comp: 8, mood: -5 }); aff(s, 'liu', 8);
-        if (roll(.55 + s.a.comp / 300)) { s.f.award = 1; s.bonus += 3; A(s, { comp: 8 }); return '挑战杯全国二等奖！\n推免加分 +3'; }
-        s.bonus += 1.5; return '止步省赛，拿了省一。推免加分 +1.5'; } }] : []),
-      { t: '自己拉队伍参赛', h: '下月行动点-1', fx: s => {
-        s.apPenalty++; A(s, { comp: 6, mood: -6 });
-        if (roll(.15 + s.a.comp / 200)) { s.bonus += 1.5; return '黑马！省赛一等奖。推免加分 +1.5'; }
-        return '校赛就被刷了。评委说"创新性不足"。'; } },
-      { t: '不参加', d: { mood: 3 } },
-    ] },
-  paper: { title: '论文机会',
-    text: '组会后导师叫住了你："有个小方向，你要不要试着写一篇？"',
-    choices: [
-      { t: '熬夜冲一篇一作', req: s => s.a.sci >= 35, rq: '需要 科研≥35', fx: s => { A(s, { mood: -15 }); s.apPenalty++;
-          if (roll(.3 + s.a.sci / 150)) { s.f.paper = 1; s.bonus += 3; A(s, { sci: 15 }); return '改了十一稿后——"Accept"。\n推免加分 +3（下月行动点-1）'; }
-          A(s, { sci: 6 }); return '被拒稿了，审稿意见写了三页。（下月行动点-1）'; } },
-      { t: '帮师兄跑实验，蹭个挂名', req: s => s.a.sci >= 15, rq: '需要 科研≥15', fx: s => { A(s, { sci: 6, mood: -5 });
-          if (roll(.6)) { s.f.coauthor = 1; s.bonus += 1; return '师兄的论文中了，你是第三作者！推免加分 +1'; }
-          return '实验跑完了，论文还在投。'; } },
-      { t: '婉拒，专心刷绩点', d: { gpa: .05, kn: 3 }, r: '导师点点头："也好。"' },
-    ] },
-  proj_zhou: { title: '互联网+',
-    text: s => s.aff.zhou >= 25
-      ? '周学姐："我们的互联网+项目进省赛了，还差一个人做路演，有奖金哦！"'
-      : `互联网+大赛开始报名。周学姐的团队已经满员了（好感 ${s.aff.zhou}/25）。`,
-    choices: s => [
-      ...(s.aff.zhou >= 25 ? [{ t: '加入周学姐的团队', h: '下月行动点-1', fx: s => {
-        s.apPenalty++; A(s, { comp: 6, intern: 6, mood: -4 }); aff(s, 'zhou', 8);
-        if (roll(.6)) { s.bonus += 2; s.coins += 800; return '省赛金奖！推免加分 +2，奖金 ¥800'; }
-        s.bonus += .5; return '省赛铜奖。推免加分 +0.5'; } }] : []),
-      { t: '自己写商业计划书', h: '下月行动点-1', fx: s => {
-        s.apPenalty++; A(s, { comp: 4, mood: -5 });
-        if (roll(.2)) { s.bonus += 1; return '意外拿了省银！推免加分 +1'; }
-        return '计划书被评委评价为"像在做梦"。'; } },
-      { t: '不参加', d: { mood: 3 } },
-    ] },
-  cv: { title: '简历与文书',
-    text: s => '五月，各校夏令营通知陆续发布。你需要一份简历和个人陈述。' + (s.f.agency ? '\n（保研机构已经帮你精修过一版了）' : ''),
-    choices: [
-      { t: '字斟句酌打磨', h: '本月行动点-1', fx: s => { s.ap = Math.max(0, s.ap - 1); s.f.cv = 1; }, r: '每个标点都被你审视过。' },
-      { t: '请学长学姐帮忙改', req: s => maxSenior(s) >= 20, rq: '需要 任一学长学姐好感≥20', fx: s => { s.f.cv = 1; }, r: '学姐删掉了你写的"热爱科研"，换成了具体项目。专业。' },
-      { t: '网上找个模板套一下', r: '能用就行。' },
-      { t: '在简历里"适度夸张"', d: { mood: 3 }, fx: s => { s.f.cv = 1; s.f.exaggerate = 1; }, r: '"参与"变成了"主导"，"了解"变成了"精通"。' },
-    ] },
-  final2: { title: '最后一次期末',
-    text: s => `这是推免前最后一个计入排名的期末。\n当前排名第 ${rank(s)} 名，推免线第 ${QUOTA} 名（约 GPA ${lineGpa(s).toFixed(2)}，无加分时）。`,
-    choices: [
-      { t: '全力冲刺', d: { gpa: .12, kn: 5, mood: -10 } },
-      { t: '正常复习', d: { gpa: .05, kn: 3, mood: -3 } },
-      { t: '和王卷卷组队复习', req: s => s.aff.wang >= 30, rq: '需要 王卷卷好感≥30', d: { gpa: .1, kn: 4, mood: -4 } },
-      { t: '开摆', d: { gpa: -.1, mood: 10 } },
-    ] },
-  camp_apply: { title: '夏令营报名',
-    text: s => `夏令营报名系统开放了。报名免费，但参营的机票酒店要自理：\n清北 ¥${COST[1]} / 华五 ¥${COST[2]} / 中流985 ¥${COST[3]} / 本校 ¥${COST[4]}\n\n你的综合竞争力：${score(s)}（${tierHint(score(s))}），钱包：¥${s.coins}`,
-    choices: s => {
-      const go = list => s => {
-        s.f.inCamp = list.filter(t => score(s) >= TH[t] - 12 || roll(.15));
-        s.f.reimb = s.f.inCamp.filter(() => roll(.35));
-        if (!s.f.inCamp.length) return '你等了一个月，邮箱里只有广告。\n一个营都没入。';
-        return '入营通知来了：\n' + s.f.inCamp.map(t => `  ✔ ${TIER[t]}${s.f.reimb.includes(t) ? '（包食宿！）' : ''}`).join('\n');
-      };
-      return [
-        ...[1, 2, 3, 4].map(t => ({ t: `主投 ${TIER[t]}`, h: hint(chance(s, t)), fx: go([t]) })),
-        { t: '海投！各档都投', h: '心态-10', fx: s => { A(s, { mood: -10 }); return go([1, 2, 3, 4])(s); } },
-      ];
-    } },
-
-  /* ---- 夏令营 ---- */
-  camp_travel: { title: '参营行程', cond: s => s.f.inCamp && s.f.inCamp.length,
-    text: s => `你入营了：\n${s.f.inCamp.map(t => `  ${TIER[t]}：机票+酒店 ¥${campCost(s, t)}${s.f.reimb.includes(t) ? '（包食宿）' : ''}`).join('\n')}\n\n你的钱包：¥${s.coins}。去哪几个？`,
-    choices: s => {
-      const list = s.f.inCamp, total = list.reduce((x, t) => x + campCost(s, t), 0);
-      const go = ts => s => { const c = ts.reduce((x, t) => x + campCost(s, t), 0); s.coins -= c; s.f.attend = ts;
-        return ts.length ? `你订好了机票和酒店，花费 ¥${c}。` : '你含泪放弃了所有营。'; };
-      const out = [];
-      if (list.length > 1) out.push({ t: `全都去（¥${total}）`, req: s => s.coins >= total, rq: `需要 ¥${total}`, fx: go(list) });
-      list.forEach(t => out.push({ t: `只去 ${TIER[t]}（¥${campCost(s, t)}）`, req: s => s.coins >= campCost(s, t), rq: `需要 ¥${campCost(s, t)}`, fx: go([t]) }));
-      out.push({ t: '钱不够，全部放弃', d: { mood: -8 }, fx: go([]) });
-      return out;
-    } },
-  camp_interview: { title: '夏令营考核',
-    text: s => s.f.attend && s.f.attend.length
-      ? `营期开始了：${s.f.attend.map(t => TIER[t]).join('、')}。\n你手里有 ${s.zhenti} 份保研真题。考核包含笔试和面试，重点准备什么？`
-      : '朋友圈里都是"优营 get"，而你这个夏天没有参营。\n怎么办？',
-    choices: s => {
-      if (!s.f.attend || !s.f.attend.length) return [
-        { t: '安慰自己：预推免才是主战场', d: { mood: 8 } },
-        { t: '复盘简历，疯狂补短板', d: { eng: 5, sci: 5, mood: -8 } },
-      ];
-      const iv = bonus => s => {
-        const out = [];
-        for (const t of s.f.attend) {
-          let b = bonus;
-          if (s.f.exaggerate && roll(.35)) { b -= 12; out.push(`（${TIER[t]}的面试官追问简历上"主导"的项目，你支支吾吾……）`); }
-          if (roll(chance(s, t, b))) { gain(s, t); out.push(`${TIER[t]}：优秀营员 ✔`); }
-          else out.push(`${TIER[t]}：未通过 ✘`);
-        }
-        A(s, { mood: s.offers.length ? 12 : -12 });
-        return out.join('\n');
-      };
-      return [
-        { t: '把真题刷透', h: `真题×${s.zhenti}`, fx: iv(s.zhenti * 2) },
-        { t: '英文自我介绍背到滚瓜烂熟', fx: iv(Math.round(s.a.eng / 12)) },
-        { t: '把科研经历讲透', fx: iv(Math.round(s.a.sci / 10)) },
-        { t: '随缘面试，保持松弛', fx: s => { A(s, { mood: 6 }); return iv(0)(s); } },
-      ];
-    } },
-  after_camp: { title: '夏令营之后',
-    text: s => s.offers.length
-      ? `你手握 ${s.offers.map(t => TIER[t]).join('、')} 的优营。\n导师发来消息："同学，你确定会来吗？"`
-      : '八月的夜晚，你一个人走在操场上。\n夏令营结束了，预推免还有一个月。',
-    choices: s => s.offers.length ? [
-      { t: '口头承诺：一定来！', d: { mood: 10 }, fx: s => { s.f.promised = 1; } },
-      { t: '含糊其辞，骑驴找马', d: { mood: -3 }, fx: s => { s.f.riding = 1; }, r: '"老师我会认真考虑的！"' },
-    ] : [
-      { t: '去海边散散心', d: { mood: 18 } },
-      { t: '闭关准备预推免', d: { sci: 5, eng: 5, mood: -10 } },
-      { t: '找李八卦打听捡漏信息', req: s => s.aff.li >= 20, rq: '需要 李八卦好感≥20', fx: s => { s.f.intel = 1; aff(s, 'li', 3); }, r: '李八卦给你发了一份《各校预推免缺额名单》。' },
-    ] },
-
-  /* ---- 大四上 ---- */
-  qual: { title: '推免资格公示',
-    text: s => `学院公示了推免名单。你的最终排名：第 ${rank(s)} / ${N} 名（名额 ${QUOTA} 个）\n\n` +
-      (qualified(s) ? '你在名单上看到了自己的名字！' : '你从头到尾找了三遍……没有你的名字。'),
-    choices: s => qualified(s) ? [
-      { t: '长舒一口气，继续保研', d: { mood: 10 }, fx: s => { s.f.qual = 1; } },
-      { t: '放弃名额，申请出国', req: s => s.a.eng >= 60, rq: '需要 英语≥60', fx: s => { s.f.track = 'abroad'; } },
-      { t: '放弃名额，直接找工作', fx: s => { s.f.track = 'job'; } },
-    ] : [
-      { t: '去找辅导员申诉', fx: s => {
-          if (roll(.15)) { s.f.qual = 1; A(s, { mood: 10 }); return '辅导员翻了翻表格："有个同学放弃了名额，你递补上了。"'; }
-          s.f.track = 'kaoyan'; A(s, { mood: -10 }); return '申诉无果。那天晚上，你默默打开了考研网课。'; } },
-      { t: '准备考研', fx: s => { s.f.track = 'kaoyan'; } },
-      { t: '申请出国', req: s => s.a.eng >= 60, rq: '需要 英语≥60', fx: s => { s.f.track = 'abroad'; } },
-      { t: '去找工作', fx: s => { s.f.track = 'job'; } },
-    ] },
-  prepush_mode: { title: '预推免 · 面试方式', cond: s => s.f.qual && best(s) !== 1,
-    text: s => `预推免要开始了。线下面试能见到导师、发挥更好，但路费要自己出。\n你的钱包：¥${s.coins}`,
-    choices: [
-      { t: '线下面试（路费自理，发挥 +3）', fx: s => { s.f.ppMode = 'off'; } },
-      { t: '线上面试（省钱，发挥 -2）', fx: s => { s.f.ppMode = 'on'; } },
-    ] },
-  prepush: { title: '预推免', cond: s => s.f.qual,
-    text: s => `你的综合竞争力：${score(s)}，面试加成：${ivBonus(s)}\n当前 offer：${s.offers.length ? s.offers.map(t => TIER[t]).join('、') : '无'}　钱包：¥${s.coins}`,
-    choices: s => {
-      const b = best(s), off = s.f.ppMode === 'off';
-      const bonus = (off ? 3 : -2) + (s.f.intel ? 4 : 0);
-      const list = [1, 2, 3, 4].filter(t => !b || t < b).map(t => {
-        const c = off ? COST[t] : 0;
-        return { t: `冲 ${TIER[t]}${off ? `（¥${c}）` : '（线上）'}`, h: hint(chance(s, t, bonus)), req: s => s.coins >= c, rq: `需要 ¥${c}`,
-          fx: s => { s.coins -= c; A(s, { mood: -8 });
-            if (roll(chance(s, t, bonus))) { gain(s, t); A(s, { mood: 15 }); return `${TIER[t]} 的预推免 offer 到手了！`; }
-            return `${TIER[t]} 的面试官说："回去等通知吧。"\n然后就没有然后了。`; } };
-      });
-      if (b) list.push({ t: '不折腾了，就它了', d: { mood: 12 } });
-      else list.push({ t: '海投线上预推免', h: '心态-18', fx: s => {
-        A(s, { mood: -18 }); const out = [];
-        for (const t of [2, 3, 4]) { if (roll(chance(s, t, bonus - 3))) { gain(s, t); out.push(`${TIER[t]} ✔`); } else out.push(`${TIER[t]} ✘`); }
-        return '一周面了六场，嗓子都哑了。\n' + out.join('\n'); } });
-      return list;
-    } },
-  drama: { title: '名额风波', cond: s => s.f.qual,
-    text: s => s.offers.length
-      ? '保研群里突然传言：今年各校名额收紧，不少人的 offer 被"候补"了。'
-      : '九推前夕，你还没有 offer。听说有人手握好几个 offer，到时候会放鸽子……',
-    choices: s => {
-      const keep = p => s => {
-        if (roll(s.f.riding ? p - .25 : p)) return '导师回复："放心，名额给你留着。"';
-        const b = best(s); s.offers = s.offers.filter(t => t !== b); A(s, { mood: -20 });
-        return `导师回复："抱歉，组里名额已经满了。"\n你的 ${TIER[b]} offer……没了。` + (s.f.riding ? '\n（也许是骑驴找马被发现了？）' : '');
-      };
-      return s.offers.length ? [
-        { t: '主动联系导师，表忠心', fx: keep(.92) },
-        { t: '装死，不看不听不问', d: { mood: 5 }, fx: keep(.7) },
-        { t: '再多联系几个保底', d: { mood: -10 }, fx: s => {
-            let t = '';
-            if (!s.offers.includes(4) && roll(.75)) { gain(s, 4); t = '你拿到了一个 211/本校 的保底。\n'; }
-            return t + keep(.85)(s); } },
-      ] : [
-        { t: '疯狂给导师发邮件捡漏', d: { mood: -12 }, fx: s => {
-            if (roll(chance(s, 3, s.f.intel ? 2 : -5))) { gain(s, 3); return '凌晨两点，一位中流 985 的老师回复："明天来面一下？"\n捡漏成功！'; }
-            if (roll(chance(s, 4))) { gain(s, 4); return '发了 80 封邮件，终于有一所 211 愿意要你。'; }
-            return '80 封邮件，3 封回复，都是"名额已满"。'; } },
-        { t: '放弃保研，转战考研', fx: s => { s.f.track = 'kaoyan'; } },
-        { t: '放弃保研，去找工作', fx: s => { s.f.track = 'job'; } },
-      ];
-    } },
-  ninepush: { title: '九推之夜',
-    text: s => s.offers.length
-      ? `推免服务系统即将开放。\n你手上的 offer：${s.offers.slice().sort().map(t => TIER[t]).join('、')}`
-      : '推免服务系统开放了，但你没有任何 offer。\n系统里还有零星几个"补录"名额在闪烁……',
-    choices: s => s.offers.length ? [
-      { t: `定三个闹钟，准时填报 ${TIER[best(s)]}`, fx: s => { s.f.final = best(s); }, r: '填报、待录取、确认——\n"恭喜您已被录取"。你截了十张图。' },
-      { t: '前一晚通宵庆祝', d: { mood: 10 }, fx: s => {
-          if (roll(.75)) { s.f.final = best(s); return '你踩着最后一刻点下了"接受"。心跳 180。'; }
-          s.f.oversleep = 1; return '你醒来时已经是第二天下午。\n手机上有 99+ 条未读消息。'; } },
-      ...(s.offers.length > 1 ? [{ t: `选离家最近的 ${TIER[Math.max(...s.offers)]}`, d: { mood: 15 }, fx: s => { s.f.final = Math.max(...s.offers); }, r: '妈妈说，离家近点好。' }] : []),
-    ] : [
-      { t: '刷新系统到最后一刻', fx: s => {
-          if (roll(.15)) { gain(s, 4); s.f.final = 4; return '凌晨，有人放弃了一个补录名额——你抢到了！'; }
-          s.f.track = 'kaoyan'; return '系统关闭了。\n你合上电脑："考研，我来了。"'; } },
-      { t: '准备考研', fx: s => { s.f.track = 'kaoyan'; } },
-      { t: '去找工作', fx: s => { s.f.track = 'job'; } },
-      { t: '申请出国', req: s => s.a.eng >= 60, rq: '需要 英语≥60', fx: s => { s.f.track = 'abroad'; } },
-    ] },
-
-  /* ---- 其他出路 ---- */
-  tr_kaoyan: { title: '考研之路',
-    text: s => `考研拼的是前期积累的基础知识。\n你的基础知识量：${s.a.kn}　心态：${s.a.mood}　钱包：¥${s.coins}\n\n报考哪里？`,
-    choices: s => [
-      { t: '报考 985', h: hint(kyP(s, 70)), fx: kyGo(70, 0, 'top', '985') },
-      { t: '报考 211 / 双一流', h: hint(kyP(s, 55)), fx: kyGo(55, 0, 'ok', '211') },
-      { t: '报考 双非保底', h: hint(kyP(s, 40)), fx: kyGo(40, 0, 'ok', '双非院校') },
-      { t: '报考研班，冲 985（¥3000）', h: hint(kyP(s, 70, 10)), req: s => s.coins >= 3000, rq: '需要 ¥3000', fx: s => { s.coins -= 3000; return kyGo(70, 10, 'top', '985')(s); } },
-    ] },
-  tr_abroad: { title: '留学申请',
-    text: s => `你需要准备语言成绩、文书和申请费。\nGPA ${s.a.gpa.toFixed(2)}　英语 ${s.a.eng}　科研 ${s.a.sci}　实习 ${s.a.intern}\n钱包：¥${s.coins}`,
-    choices: s => [
-      { t: 'DIY 申请（申请费 ¥1500）', h: abroadHint(s, 0), req: s => s.coins >= 1500, rq: '需要 ¥1500', fx: s => { s.coins -= 1500; return abroadGo(s, 0); } },
-      { t: '找留学中介（¥6000，文书加成）', h: abroadHint(s, 8), req: s => s.coins >= 6000, rq: '需要 ¥6000', fx: s => { s.coins -= 6000; return abroadGo(s, 8); } },
-      { t: '钱不够……转战考研', fx: s => { s.f.track = 'kaoyan'; }, r: '你把雅思资料换成了考研资料。' },
-    ] },
-  tr_job: { title: '秋招',
-    text: s => `秋招开始了。面试官最看重的是实习经历。\n实习 ${s.a.intern}　竞赛 ${s.a.comp}　基础 ${s.a.kn}`,
-    choices: s => [
-      { t: '冲互联网大厂', h: hint(jobBigP(s)), fx: s => {
-          s.f.trackDone = 1;
-          if (roll(jobBigP(s))) { s.f.res = 'big'; return '五轮面试后，HR 打来电话："恭喜你！"'; }
-          if (roll(.4 + s.a.intern / 200)) { s.f.res = 'ok'; return '大厂没过，但捞到了一家不错的公司。'; }
-          s.f.res = 'fail'; return '简历石沉大海。'; } },
-      { t: '投国企 / 央企', h: hint(jobSoeP(s)), fx: s => { s.f.trackDone = 1;
-          if (roll(jobSoeP(s))) { s.f.res = 'ok'; return '笔试、面试、政审——你拿到了国企 offer。'; }
-          s.f.res = 'fail'; return '笔试差了 2 分。'; } },
-      { t: '投中小公司', h: hint(.5 + s.a.intern / 150), fx: s => { s.f.trackDone = 1;
-          if (roll(.5 + s.a.intern / 150)) { s.f.res = 'ok'; return '一家创业公司的老板很欣赏你。'; }
-          s.f.res = 'fail'; return '面了十几家，都没有下文。'; } },
-    ] },
-};
-
-function kyGo(th, b, res, school) {
-  return s => {
-    s.f.trackDone = 1;
-    if (roll(kyP(s, th, b))) { s.f.res = res; s.f.school = school; return `十二月，你走进考场。\n三月，成绩出来了——上线！你考上了${school}！`; }
-    s.f.res = 'fail'; return '十二月，你走进考场。\n三月，成绩出来了……差了几分。';
-  };
-}
-function abroadHint(s, b) { const x = abroadScore(s, b); return x >= 48 ?'QS前100有戏' : x >= 15 ? '能申到学校' : '很悬'; }
-function abroadGo(s, b) {
-  s.f.trackDone = 1;
-  const x = abroadScore(s, b);
-  if (roll(sig((x - 48) / 6))) { s.f.res = 'top'; return '邮箱里躺着一封 Offer —— QS 前 100 的名校！'; }
-  if (roll(sig((x - 15) / 6))) { s.f.res = 'mid'; return '你收到了一所 QS 100 名开外学校的录取。'; }
-  s.f.res = 'fail'; return '申请季结束，你收到了 8 封拒信。';
-}
-function jobBigP(s) { return clamp(sig((s.a.intern + s.a.comp * .2 - 55) / 7), .03, .95); }
-function jobSoeP(s) { return clamp(sig((s.a.intern * .6 + (s.a.gpa - 3) * 40 + s.a.kn * .2 - 35) / 7), .05, .95); }
-
-function askLiChoices(s) {
-  return [
-    { t: '如实相告', fx: s => { aff(s, 'li', 10);
-        if (rank(s) <= QUOTA && roll(.5)) { s.f.rival = (s.f.rival || 0) + 1; A(s, { mood: -4 }); return `第二天，全年级都知道你排第 ${rank(s)} 名了。\n大家明显更卷了……（同学平均水平上升）`; }
-        return '李八卦拍拍你："加油哦！"\n（李八卦好感 +10）'; } },
-    { t: '打哈哈："我就混混日子"', d: { mood: 2 }, fx: s => { aff(s, 'li', -3); }, r: '李八卦撇撇嘴，没再追问。' },
-    { t: '反向打听', req: s => s.aff.li >= 20, rq: '需要 李八卦好感≥20', fx: s => { aff(s, 'li', 3); s.f.intel = 1;
-        return `你套出了不少情报：\n目前推免线（第 ${QUOTA} 名）大约是 GPA ${lineGpa(s).toFixed(2)}，前十名几乎人人有竞赛加分。\n预推免哪些学校缺人，李八卦也知道一些。`; } },
-    { t: '故意报低一点', fx: s => {
-        if (roll(.3)) { aff(s, 'li', -15); A(s, { mood: -5 }); return '没过多久就被拆穿了。李八卦：“哼，防着我是吧？”'; }
-        aff(s, 'li', 4); return '李八卦信了，还安慰了你几句。'; } },
-  ];
-}
-function askWangChoices(s) {
-  return [
-    { t: '摊开来比较', fx: s => {
-        if (s.a.gpa >= 3.8 || s.bonus >= 4) { A(s, { mood: 8 }); aff(s, 'wang', -4); return '王卷卷看完你的数据，沉默了。'; }
-        A(s, { mood: -8, kn: 2 }); return '王卷卷 GPA 3.86，加分 4.5。\n你回宿舍的路上一直在叹气。'; } },
-    { t: '提议组学习小组', fx: s => { aff(s, 'wang', 12); }, r: '王卷卷愣了一下："……行。"\n（王卷卷好感 +12）' },
-    { t: '"我不想比较"', d: { mood: 3 }, fx: s => { aff(s, 'wang', -3); } },
-  ];
-}
-
-/* 社交触发事件：好感达到阈值 */
-const SENIOR_GIFT = { chen: '保研面试真题', liu: '机试真题', zhou: '面试真题和面经' };
-SENIORS.forEach(id => {
-  EV['gift_' + id] = { title: `${npc(id).n}的礼物`, tag: '社交',
-    text: `${npc(id).n}发来一个压缩包："这是我当年整理的${SENIOR_GIFT[id]}，别外传哦。"`,
-    choices: [{ t: '谢谢！请你喝奶茶', fx: s => { s.zhenti++; s.coins -= Math.min(s.coins, 30); aff(s, id, 5); }, r: '获得【保研真题 ×1】\n夏令营和预推免面试时会有加成。' }] };
-});
-EV.bond_wang = { title: '学习搭子', tag: '社交', text: '王卷卷：“以后一起自习吧，互相监督。”',
-  choices: [{ t: '好！', fx: s => { s.f.buddy = 1; }, r: '从此自习时 GPA 和基础的收益提升。' }, { t: '我习惯一个人学', d: { mood: 3 } }] };
-EV.bond_li = { title: '内部消息', tag: '社交', text: '李八卦压低声音："告诉你个秘密，今年有几所学校预推免名额特别多……"',
-  choices: [{ t: '认真记下来', fx: s => { s.f.intel = 1; }, r: '获得【情报】：预推免和捡漏成功率提升。' }] };
-EV.bond_zhang = { title: '室友的松弛感', tag: '社交', text: '张佛："走，周末爬山去。人生不只有保研。"',
-  choices: [{ t: '跟着去爬山', d: { mood: 15 }, fx: s => { s.f.chill = 1; }, r: '山顶的风很大。你学会了一点松弛感。\n（休息的收益提升）' }] };
-
-/* ============ 随机事件 ============ */
-const RANDOM = {
-  sick: { title: '换季感冒', text: '降温了，你鼻塞头痛，浑身没劲。',
-    choices: [{ t: '硬撑着去上课', d: { gpa: .02, mood: -10 } }, { t: '请假在宿舍睡两天', fx: s => { s.ap = Math.max(0, s.ap - 1); }, d: { mood: 8 }, r: '（本月行动点-1）' }] },
-  snore: { title: '室友的呼噜', text: '凌晨两点，隔壁宿舍的呼噜声穿墙而来。',
-    choices: [{ t: '买个降噪耳机（¥300）', req: s => s.coins >= 300, rq: '需要 ¥300', fx: s => { s.coins -= 300; }, d: { mood: 4 } }, { t: '忍着', d: { mood: -8 } }] },
-  dinner: { title: '导师请客', cond: s => s.a.sci >= 15, text: '课题组聚餐，导师坐在你对面。',
-    choices: [{ t: '积极汇报进展', d: { sci: 5, mood: 3 } }, { t: '埋头干饭', d: { mood: 10 } }] },
-  moments: { title: '朋友圈焦虑', text: '同学 A 发了论文，同学 B 拿了国奖，同学 C 去了大厂实习。',
-    choices: [{ t: '点赞，并默默焦虑', d: { mood: -10 } }, { t: '屏蔽朋友圈，专注自己', d: { mood: 6 } }] },
-  scholarship: { title: '奖学金评定', cond: s => s.a.gpa >= 3.6, text: '你拿到了一等奖学金 ¥3000！',
-    choices: [{ t: '请全宿舍吃火锅（¥500）', fx: s => { s.coins += 2500; aff(s, 'zhang', 10); }, d: { mood: 10 } }, { t: '全部存起来', fx: s => { s.coins += 3000; } }] },
-  teammate: { title: '小组作业', text: '小组作业 DDL 前一天，队友们集体失联。',
-    choices: [{ t: '一个人 Carry 全组', d: { gpa: .04, mood: -10 } },
-              { t: '在群里 @所有人', fx: s => { if (roll(.5)) { A(s, { mood: 3 }); return '队友们纷纷冒泡："来了来了！"'; } A(s, { gpa: -.04, mood: -6 }); return '已读不回。分数很难看。'; } }] },
-  crash: { title: '服务器炸了', cond: s => s.a.sci >= 20, text: '跑了三天的实验，服务器突然宕机，数据没了。',
-    choices: [{ t: '重新跑', d: { sci: 3, mood: -12 } }, { t: '求助陈学姐', d: { sci: 5, mood: -3 }, fx: s => { aff(s, 'chen', 3); }, r: '学姐："下次记得存 checkpoint。"' }] },
-  parents: { title: '家里的电话', text: '妈妈打来电话："最近怎么样？钱够花吗？"',
-    choices: [{ t: '跟爸妈聊聊压力', d: { mood: 12 } }, { t: '"其实……有点不够"', fx: s => { s.coins += 1000; }, d: { mood: -3 }, r: '爸爸转来 ¥1000："省着点花。"' }] },
-  video: { title: '深夜短视频', text: '凌晨一点，你打开了短视频 App，"就看五分钟"。',
-    choices: [{ t: '再刷一会儿', d: { mood: 6, gpa: -.02 }, r: '五分钟变成了两小时。' }, { t: '放下手机睡觉', d: { mood: 3 } }] },
-  phone: { title: '手机碎屏', text: '你的手机从桌上滑落，屏幕碎成了蜘蛛网。',
-    choices: [{ t: '去修（¥600）', req: s => s.coins >= 600, rq: '需要 ¥600', fx: s => { s.coins -= 600; } }, { t: '凑合着用', d: { mood: -8 } }] },
-  scam: { title: '"保研内部名额"', text: '一个陌生人加你微信："985 保研内部名额，¥5000 包过，名额有限！"',
-    choices: [{ t: '直接拉黑', d: { mood: 2 }, r: '你识破了骗局。' },
-              { t: '转账试试', req: s => s.coins >= 5000, rq: '需要 ¥5000', fx: s => { s.coins -= 5000; A(s, { mood: -25 }); }, r: '转账后，对方把你拉黑了。\n你报了警，但钱没追回来。' }] },
-  cat: { title: '校园猫', text: '图书馆门口那只橘猫又在晒太阳了。',
-    choices: [{ t: '蹲下来摸摸它', d: { mood: 8 } }, { t: '买根猫条（¥10）', fx: s => { s.coins -= Math.min(s.coins, 10); }, d: { mood: 10 } }] },
-  rumor: { title: '保研群的消息', text: '保研群里有人整理了一份《各校夏令营 / 预推免全攻略》。',
-    choices: [{ t: '熬夜研究每一条', d: { mood: -6 }, fx: s => { s.f.intel = 1; }, r: '获得【情报】。' }, { t: '看着头大，划走', d: { mood: 2 } }] },
-  zhang_rand: { title: '室友的夜宵', text: '张佛提着烧烤回来："来，吃点？"',
-    choices: [{ t: '一起吃，聊到深夜', d: { mood: 10 }, fx: s => { aff(s, 'zhang', 8); } }, { t: '婉拒，继续学习', d: { kn: 2, mood: -2 } }] },
-};
-Object.entries(RANDOM).forEach(([id, e]) => { e.tag = '随机'; EV[id] = e; });
-
-/* ============ 月度行动 ============ */
-const ACTIONS = [
-  { id: 'study', n: '上课自习', ap: 1, d: 'GPA↑ 基础↑ 心态↓', run: s => { A(s, { gpa: s.f.buddy ? .04 : .03, mood: -3 }); grow(s, 'kn', s.f.buddy ? 7 : 5); return '你在图书馆泡了一整周。'; } },
-  { id: 'sci', n: '实验室科研', ap: 1, d: '科研↑ 心态↓', run: s => { grow(s, 'sci', 7); A(s, { mood: -3 }); return '实验室的灯，为你亮到凌晨。'; } },
-  { id: 'comp', n: '竞赛训练', ap: 1, d: '竞赛↑ 心态↓', run: s => { grow(s, 'comp', 7); A(s, { mood: -3 }); return '刷题、建模、复盘。'; } },
-  { id: 'eng', n: '英语 / 雅思', ap: 1, d: '英语↑', run: s => { grow(s, 'eng', 6); A(s, { mood: -2 }); return '单词书又翻烂了一本。'; } },
-  { id: 'intern', n: '实习', ap: 2, d: '实习↑ 金币+400 GPA↓', cond: s => s.m >= 5, lock: '寒假后开放', run: s => { grow(s, 'intern', 14); s.coins += 400; A(s, { gpa: -.02, mood: -5 }); return '工牌挂在胸前，你第一次觉得自己是个"社会人"。'; } },
-  { id: 'tutor', n: '家教兼职', ap: 1, d: '金币+350 心态↓', cond: s => s.a.kn >= 30, lock: '需要 基础≥30', run: s => { s.coins += 350; A(s, { mood: -4 }); return '初三的小孩问你："哥/姐，你为啥要读研？"'; } },
-  { id: 'milk', n: '奶茶店兼职', ap: 1, d: '金币+200 心态↓', run: s => { s.coins += 200; A(s, { mood: -3 }); return '摇了一周奶茶，手腕有点酸。'; } },
-  { id: 'outsrc', n: '接外包项目', ap: 2, d: '金币+1000 心态↓↓', cond: s => s.a.comp >= 35 || s.a.sci >= 35, lock: '需要 竞赛或科研≥35', run: s => { s.coins += 1000; A(s, { mood: -8 }); return '甲方改了七版需求，钱终于到账了。'; } },
-  { id: 'rest', n: '休息娱乐', ap: 1, d: '心态↑', run: s => { A(s, { mood: s.f.chill ? 16 : 12 }); return pick(['睡到自然醒。', '和朋友去看了场电影。', '打了一下午游戏。']); } },
-];
-
-const CHAT = {
-  wang: ['王卷卷边刷题边和你聊了五分钟，效率极高。', '你们讨论了一道期末压轴题。'],
-  li: ['李八卦告诉你隔壁班的三个八卦。', '你们在食堂聊了一中午。'],
-  zhang: ['你和张佛在宿舍打了两把游戏。', '张佛给你泡了杯茶："别急。"'],
-  chen: ['陈学姐给你讲了实验室的研究方向。', '学姐分享了她的保研经历。'],
-  liu: ['刘学长给你推荐了几本竞赛书。', '学长带你复盘了一道建模题。'],
-  zhou: ['周学姐给你讲了她的创业故事。', '学姐教你怎么做路演 PPT。'],
-};
-const SENIOR_ATTR = { chen: 'sci', liu: 'comp', zhou: 'intern' };
-
-const AGENCY = [
-  { lv: 1, n: '保研文书精修班', price: 2500, perks: '简历文书精修（竞争力+3）\n院校信息库（获得【情报】）' },
-  { lv: 2, n: '全程 VIP 1v1 保研规划', price: 6000, perks: '包含精修班全部内容\n保研真题 ×2\n模拟面试（面试加成+5）' },
-];
-
-/* ============ 结局 ============ */
-const ENDINGS = {
-  scholar:     { t: '学术新星', r: 'SSR', c: 'var(--purple)', d: s => `${s.name} 带着一作论文走进了清北的实验室。\n导师说："你是我带过起点最高的学生。"` },
-  qingbei:     { t: '顶峰相见', r: 'SR', c: 'var(--red)', d: s => `录取通知上的校徽闪闪发光。\n${s.name} 终于站上了那座曾经只敢仰望的山峰。` },
-  huawu:       { t: '华五入场券', r: 'SR', c: 'var(--red)', d: s => `顶尖名校向 ${s.name} 敞开了大门。\n你在新学校的第一顿饭吃得很慢，想把这份喜悦多留一会儿。` },
-  mid985:      { t: '稳稳上岸', r: 'R', c: 'var(--blue)', d: s => `一所不错的 985。没有惊天逆袭，但每一步都算数。\n${s.name} 睡了一年来最踏实的一觉。` },
-  local:       { t: '熟悉的食堂', r: 'R', c: 'var(--blue)', d: s => `${s.name} 留在了熟悉的地方。\n同一个食堂，同一条林荫道，身份从"本科生"变成了"研究生"。` },
-  abroad_top:  { t: '海外名校', r: 'SR', c: 'var(--green)', d: s => `${s.name} 拿到了 QS 前 100 名校的录取。\n飞机起飞的时候，你想：原来路不止一条。` },
-  abroad_mid:  { t: '海外漂流', r: 'R', c: 'var(--green)', d: s => `${s.name} 去了一所 QS 100 名开外的学校。\n排名不算顶尖，但异国的生活让你看到了更大的世界。` },
-  abroad_fail: { t: '全聚德', r: 'N', c: '#777', d: s => `8 封拒信，0 个 offer。\n${s.name} 把拒信打印出来贴在墙上："明年再战。"` },
-  kaoyan_top:  { t: '考研逆袭', r: 'SR', c: 'var(--orange)', d: s => `没有保研又如何？\n${s.name} 凭着扎实的基础，考上了 985！\n这一路，比任何 offer 都更有分量。` },
-  kaoyan_ok:   { t: '考研上岸', r: 'R', c: 'var(--orange)', d: s => `${s.name} 考上了${s.f.school || '一所研究生院校'}。\n大三时打下的基础，终究没有白费。` },
-  kaoyan_fail: { t: '二战再见', r: 'N', c: '#777', d: s => `成绩出来那天，${s.name} 离分数线差了 6 分。\n"基础还是太薄了。"你在备忘录里写下："明年见。"` },
-  job_big:     { t: '大厂 Offer', r: 'SR', c: 'var(--teal)', d: s => `丰富的实习经历让 ${s.name} 拿下了大厂 offer。\n当同学们还在读研时，你已经开始还房贷了（划掉）攒钱了。` },
-  job_ok:      { t: '平凡打工人', r: 'R', c: 'var(--teal)', d: s => `${s.name} 找到了一份还不错的工作。\n朝九晚六，工资不高不低，周末还能睡懒觉。` },
-  job_fail:    { t: '灵活就业', r: 'N', c: '#777', d: s => `没有实习经历，秋招颗粒无收。\n${s.name} 开始了"灵活就业"——也就是待业。` },
-  happy:       { t: '快乐至上', r: 'SR', c: 'var(--yellow)', d: s => `什么都没成，但 ${s.name} 依然笑得很开心。\n"人生是旷野，不是轨道。"` },
-  leek:        { t: '韭菜的自我修养', r: 'BAD', c: '#333', d: s => `${s.name} 花大价钱报了保研机构，结果什么都没拿到。\n顾问的微信头像变成了灰色。\n（隐藏结局：机构不是万能的）` },
-  collapse:    { t: '精神状态遥遥领先', r: 'BAD', c: '#333', d: s => `长期的焦虑压垮了 ${s.name}。\n你决定休学一年，去云南放空自己。` },
-  oversleep:   { t: '九推惊魂', r: 'BAD', c: '#333', d: s => `${s.name} 睡过了九推填报时间。\nOffer 作废，导师拉黑。\n（隐藏结局：请务必定好闹钟）` },
-};
-
-function calcEnding(s) {
-  if (s.f.collapse) return 'collapse';
-  if (s.f.oversleep) return 'oversleep';
-  if (s.f.final) return s.f.final === 1 ? (s.f.paper ? 'scholar' : 'qingbei') : ['', '', 'huawu', 'mid985', 'local'][s.f.final];
-  const tr = s.f.track || 'kaoyan', res = s.f.res || 'fail';
-  if (res === 'fail') {
-    if (s.f.agency) return 'leek';
-    if (s.a.mood >= 85) return 'happy';
-    return { kaoyan: 'kaoyan_fail', abroad: 'abroad_fail', job: 'job_fail' }[tr];
-  }
-  if (tr === 'kaoyan') return res === 'top' ? 'kaoyan_top' : 'kaoyan_ok';
-  if (tr === 'abroad') return res === 'top' ? 'abroad_top' : 'abroad_mid';
-  return res === 'big' ? 'job_big' : 'job_ok';
-}
-
-/* ============ 存档 ============ */
-let S = load();
-let screen = S ? 'game' : 'title';
-let tab = 'act';
-function load() { try { return JSON.parse(localStorage.getItem(KEY)); } catch (e) { return null; } }
-function save() { if (S) localStorage.setItem(KEY, JSON.stringify(S)); else localStorage.removeItem(KEY); }
-function unlocked() { try { return JSON.parse(localStorage.getItem(GKEY)) || []; } catch (e) { return []; } }
-function unlock(id) { const u = unlocked(); if (!u.includes(id)) { u.push(id); localStorage.setItem(GKEY, JSON.stringify(u)); } }
-
-function newGame(roleId) {
-  let role = ROLES.find(r => r.id === roleId);
-  if (!role.a) role = { n: role.n, coins: 1000 + Math.floor(Math.random() * 3000), bonus: 0, a: {
-    gpa: Math.round((3.2 + Math.random() * .55) * 100) / 100, kn: 20 + Math.floor(Math.random() * 30),
-    eng: 30 + Math.floor(Math.random() * 40), sci: Math.floor(Math.random() * 30), comp: Math.floor(Math.random() * 30),
-    intern: Math.floor(Math.random() * 10), mood: 50 + Math.floor(Math.random() * 45) } };
-  const name = ($('nameInput') && $('nameInput').value.trim()) || '小保';
-  S = { v: 2, name, role: role.n, a: { ...role.a }, coins: role.coins, bonus: role.bonus, zhenti: 0,
-        aff: Object.fromEntries(NPCS.map(n => [n.id, n.aff])), gifted: {},
-        f: {}, offers: [], m: 0, ap: 0, apPenalty: 0, queue: [], cur: null, phase: 'month',
-        result: null, feed: [], seenRand: [], log: [], rankHist: [], ending: null, turns: 0 };
-  screen = 'game'; tab = 'act';
-  startMonth();
-  addLog(`${name}（${role.n}）的大三开始了。`);
-  save(); render();
-}
-
-/* ============ 流程 ============ */
-function addLog(t) { S.log.unshift({ st: S.m < MONTHS.length ? MONTHS[S.m].n : '终章', t }); S.log = S.log.slice(0, 120); }
-
-function startMonth() {
-  const mo = MONTHS[S.m];
-  S.ap = Math.max(0, mo.ap - S.apPenalty);
-  S.penaltyShown = S.apPenalty; S.apPenalty = 0;
-  if (S.m > 0) S.coins += ALLOWANCE;
-  const r = rank(S);
-  S.rankPrev = S.rankHist.length ? S.rankHist[S.rankHist.length - 1] : r;
-  S.rankHist.push(r);
-  S.feed = [];
-  // 本月事件队列：主线 → 社交触发 → 随机
-  const q = [...mo.ev];
-  SENIORS.forEach(id => { if (S.aff[id] >= 30 && !S.gifted[id]) { S.gifted[id] = 1; q.push('gift_' + id); } });
-  ['wang', 'li', 'zhang'].forEach(id => { if (S.aff[id] >= 40 && !S.gifted[id]) { S.gifted[id] = 1; q.push('bond_' + id); } });
-  if (S.m < 12 && S.m > 0 && roll(.4)) {
-    const pool = Object.keys(RANDOM).filter(id => !S.seenRand.includes(id) && (!RANDOM[id].cond || RANDOM[id].cond(S)));
-    if (pool.length) { const id = pick(pool); S.seenRand.push(id); q.push(id); }
-  }
-  S.queue = q;
-  S.phase = 'month';
-}
-
-function proceed() {
-  if (S.f.collapse) return finish();
-  if (S.f.track && !S.f.trackDone) {
-    S.queue = []; S.cur = 'tr_' + S.f.track; S.phase = 'event'; save(); render(); return;
-  }
-  if (S.f.trackDone) return finish();
-  while (S.queue.length) {
-    const id = S.queue.shift();
-    if (EV[id].cond && !EV[id].cond(S)) continue;
-    S.cur = id; S.phase = 'event'; save(); render(); return;
-  }
-  S.cur = null;
-  if (S.ap > 0) { S.phase = 'plan'; save(); render(); return; }
-  endMonth();
-}
-
-function endMonth() {
-  S.m++;
-  if (S.m >= MONTHS.length) return finish();
-  startMonth(); save(); render();
-}
-
-function choose(i) {
-  const ev = EV[S.cur], ch = val(ev.choices, S)[i];
-  if (!ch || (ch.req && !ch.req(S))) return;
-  const before = snap(S);
-  if (ch.d) A(S, ch.d);
-  let text = ch.r || '';
-  if (ch.fx) { const t = ch.fx(S); if (t) text = t; }
-  if (S.a.mood <= 0) { S.f.collapse = 1; text += '\n\n……你的心态彻底崩了。'; }
-  const ds = diffs(before, S);
-  S.result = { title: ev.title, choice: ch.t, text, deltas: ds };
-  S.turns++;
-  addLog(`【${ev.title}】${ch.t}${ds.length ? ' → ' + dtxt(ds) : ''}`);
-  S.phase = 'result';
-  save(); render();
-  if (ds.some(d => d.t.startsWith('心态') && !d.up && parseInt(d.t.slice(3)) <= -10)) shake();
-}
-
-function doAction(id) {
-  const a = ACTIONS.find(x => x.id === id);
-  if (S.ap < a.ap || (a.cond && !a.cond(S))) return;
-  const before = snap(S);
-  S.ap -= a.ap;
-  const t = a.run(S);
-  afterPlan(`【${a.n}】${t}`, before);
-}
-
-function social(id, kind) {
-  const n = npc(id), cost = kind === 'treat' ? 80 : 0;
-  if (S.ap < 1 || S.coins < cost) return;
-  const before = snap(S);
-  S.ap--; S.coins -= cost;
-  const g = kind === 'treat' ? 15 : 7 + Math.floor(Math.random() * 4);
-  aff(S, id, g); A(S, { mood: kind === 'treat' ? 4 : 2 });
-  if (SENIOR_ATTR[id]) grow(S, SENIOR_ATTR[id], 2);
-  afterPlan(`【${kind === 'treat' ? '请吃饭' : '聊天'}·${n.n}】${kind === 'treat' ? '你们在校门口吃了顿烤肉。' : pick(CHAT[id])}（好感+${g}）`, before);
-}
-
-function buyAgency(lv) {
-  const pkg = AGENCY.find(p => p.lv === lv);
-  const price = pkg.price - (lv === 2 && S.f.agency === 1 ? AGENCY[0].price : 0);
-  if ((S.f.agency || 0) >= lv || S.coins < price) return;
-  if (!confirm(`确定花费 ¥${price} 购买【${pkg.n}】吗？`)) return;
-  const before = snap(S);
-  S.coins -= price;
-  S.f.cv = 1; S.f.intel = 1;
-  if (lv === 2) S.zhenti += 2;
-  S.f.agency = lv;
-  afterPlan(`【保研机构】购买了${pkg.n}。顾问："同学，保研是信息战！"`, before);
-}
-
-function afterPlan(text, before) {
-  const ds = diffs(before, S);
-  S.feed.unshift({ t: text, d: ds });
-  addLog(text + (ds.length ? ' → ' + dtxt(ds) : ''));
-  S.turns++;
-  if (S.a.mood <= 0) { S.f.collapse = 1; return finish(); }
-  save(); render();
-}
-
-function finishMonthClick() {
-  if (S.ap > 0 && !confirm(`还有 ${S.ap} 个行动点没用，确定结束本月吗？`)) return;
-  endMonth();
-}
-
-function next() {
-  if (S.f.collapse) return finish();
-  proceed();
-}
-
-function finish() {
-  S.ending = calcEnding(S);
-  S.phase = 'ending'; S.cur = null;
-  unlock(S.ending);
-  addLog(`达成结局：${ENDINGS[S.ending].t}`);
-  save(); render();
-}
-
-/* ============ 渲染 ============ */
-function render() { renderSide(); renderMain(); renderLog(); }
-function esc(t) { return String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
-function deltaTags(ds) { return ds.map(d => `<span class="delta ${d.up ? 'up' : 'down'}">${d.t}</span>`).join(''); }
-function bar(v, min, max, c, n = 10) {
-  const k = Math.round((v - min) / (max - min) * n);
-  return `<div class="bar">${Array.from({ length: n }, (_, i) => `<i class="seg" style="${i < k ? 'background:' + c : ''}"></i>`).join('')}</div>`;
-}
-
-function renderSide() {
-  const el = $('side');
-  if (!S || screen !== 'game') {
-    el.innerHTML = `<div class="avatar-box"><canvas id="avatar" width="96" height="96"></canvas>
-      <div class="who"><b>???</b><div>等待入学</div></div></div>
-      <div class="divider"></div><div style="font-size:14px">选择你的人设，开始大三生活。<br><br>存档自动保存在浏览器本地，刷新页面也不会丢失。</div>`;
-    drawAvatar(70); return;
-  }
-  const r = rank(S), dr = S.rankPrev - r;
-  let html = `<div class="avatar-box"><canvas id="avatar" width="96" height="96"></canvas>
-    <div class="who"><b>${esc(S.name)}</b><div>${S.role}</div>
-    <div>${S.m < MONTHS.length ? MONTHS[S.m].n : '终章'}</div><div class="money">¥${S.coins}</div></div></div>
-    <div class="rankbox">
-      <div class="row"><span>专业排名</span><span class="${r <= QUOTA ? 'up' : 'down'}">${r <= QUOTA ? '推免线内' : '推免线外'}</span></div>
-      <div><span class="big">第 ${r}</span> / ${N}
-        <span class="${dr > 0 ? 'up' : dr < 0 ? 'down' : ''}">${dr > 0 ? '▲' + dr : dr < 0 ? '▼' + (-dr) : '—'}</span>
-        <span style="font-size:12px">较上月</span></div>
-      <div class="row" style="font-size:12px"><span>推免线：第 ${QUOTA} 名</span><span>加分 ${S.bonus.toFixed(1)}</span></div>
-      <canvas id="rankChart" width="250" height="48"></canvas>
-    </div>`;
-  for (const k in ATTRS) {
-    const m = ATTRS[k], v = S.a[k];
-    html += `<div class="stat"><div class="row"><span>${m.n}</span><span>${k === 'gpa' ? v.toFixed(2) : v}</span></div>${bar(v, m.min, m.max, m.c)}</div>`;
-  }
-  const sc = score(S);
-  html += `<div class="divider"></div>
-    <div class="row"><span>保研竞争力</span><span>${sc}（${tierHint(sc)}）</span></div>
-    <div class="row"><span>保研真题</span><span>× ${S.zhenti}</span></div>`;
-  if (S.a.mood < 25) html += `<div class="warn">⚠ 心态濒临崩溃！</div>`;
-  const tags = [];
-  if (S.f.paper) tags.push('<span class="tag g">一作论文</span>');
-  if (S.f.coauthor) tags.push('<span class="tag g">挂名论文</span>');
-  if (S.f.award) tags.push('<span class="tag g">竞赛大奖</span>');
-  if (S.f.dachuang) tags.push('<span class="tag g">国创项目</span>');
-  if (S.f.cet6) tags.push('<span class="tag g">六级高分</span>');
-  if (S.f.cv) tags.push('<span class="tag">精修简历</span>');
-  if (S.f.intel) tags.push('<span class="tag">情报</span>');
-  if (S.f.agency) tags.push(`<span class="tag r">${S.f.agency === 2 ? '机构VIP' : '机构精修班'}</span>`);
-  if (S.f.exaggerate) tags.push('<span class="tag r">简历注水</span>');
-  if (S.f.buddy) tags.push('<span class="tag">学习搭子</span>');
-  S.offers.slice().sort().forEach(t => tags.push(`<span class="tag y">offer·${TIER[t]}</span>`));
-  if (tags.length) html += `<div class="tags">${tags.join('')}</div>`;
-  el.innerHTML = html;
-  drawAvatar(S.a.mood);
-  drawRankChart();
-}
-
-function header() {
-  const mo = MONTHS[Math.min(S.m, MONTHS.length - 1)];
-  return `<span class="stage-label">${STAGES[mo.st].sub} · ${mo.n}</span>
-    <div class="progress">${MONTHS.map((_, i) => `<i class="${i <= S.m ? 'on' : ''}"></i>`).join('')}</div>`;
-}
-
-function renderMain() {
-  const el = $('main');
-  if (screen === 'title' || (!S && screen !== 'pick')) {
-    const has = !!S;
-    el.innerHTML = `<div class="title-screen">
-      <div class="sub-title">BAOYAN SIMULATOR</div>
-      <div class="big-title">保研模拟器</div>
-      <div class="sub-title">—— 大三求生记 ——</div>
-      <div class="menu">
-        ${has ? `<button class="btn center px" onclick="screen='game';render()">▶ 继续游戏</button>` : ''}
-        <button class="btn center px" onclick="${has ? "if(confirm('开始新游戏会覆盖当前存档，确定吗？')){screen='pick';render()}" : "screen='pick';render()"}">★ 新的人生</button>
-        <button class="btn center px" onclick="showGallery()">◆ 结局图鉴（${unlocked().length}/${Object.keys(ENDINGS).length}）</button>
-      </div>
-      <div class="press">PRESS START</div></div>`;
-    return;
-  }
-  if (screen === 'pick') {
-    el.innerHTML = `<h2>创建角色</h2>
-      <div>你的名字：<input id="nameInput" class="name-input px" maxlength="8" value="小保"></div>
-      <p style="margin:14px 0 0">选择你的人设：</p>
-      <div class="roles">${ROLES.map(r => `<button class="role px" onclick="newGame('${r.id}')"><b>${r.n}</b><p>${r.d}</p>
-        ${r.a ? `<p>GPA ${r.a.gpa} · 基础${r.a.kn} · 英${r.a.eng} · 研${r.a.sci} · 赛${r.a.comp} · 心${r.a.mood} · ¥${r.coins}</p>` : '<p>属性随机</p>'}</button>`).join('')}</div>
-      <button class="btn small px" style="margin-top:20px" onclick="screen='title';render()">← 返回</button>`;
-    return;
-  }
-  if (S.phase === 'month') {
-    const mo = MONTHS[S.m], newStage = S.m === 0 || MONTHS[S.m - 1].st !== mo.st;
-    const r = rank(S), dr = S.rankPrev - r;
-    let t = newStage ? STAGES[mo.st].desc + '\n\n' : '';
-    if (S.m > 0) t += `生活费结余 +¥${ALLOWANCE}，钱包 ¥${S.coins}\n`;
-    t += `本月排名：第 ${r} 名` + (S.m > 0 ? `（上月第 ${S.rankPrev} 名，${dr > 0 ? '▲上升 ' + dr : dr < 0 ? '▼下降 ' + (-dr) : '持平'}）` : '') + '\n';
-    if (S.m > 0 && dr < 0) t += '同学们都在进步，不进则退。\n';
-    t += `本月行动点：${S.ap}` + (S.penaltyShown ? `（项目占用 -${S.penaltyShown}）` : '');
-    el.innerHTML = `${header()}<h2>${newStage ? STAGES[mo.st].name + ' · ' : ''}${mo.n}</h2><div class="story" id="story"></div>
-      <div id="choiceBox" hidden><button class="btn center px" onclick="proceed()">▶ 开始这个月</button></div>`;
-    typeText(t);
-    return;
-  }
-  if (S.phase === 'event') {
-    const ev = EV[S.cur], chs = val(ev.choices, S);
-    el.innerHTML = `${header()}${ev.tag ? `<span class="stage-label" style="background:${ev.tag === '社交' ? 'var(--purple)' : 'var(--red)'};color:#fff">${ev.tag}事件</span>` : ''}
-      <h2>${ev.title}</h2><div class="story" id="story"></div>
-      <div id="choiceBox" class="choices" hidden>${chs.map((c, i) => {
-        const lock = c.req && !c.req(S);
-        return `<button class="btn px ${lock ? 'locked' : ''}" onclick="choose(${i})"><span class="key">${i + 1}</span>${c.t}
-          ${lock ? `<span class="hint">🔒${c.rq || ''}</span>` : c.h ? `<span class="hint">${c.h}</span>` : ''}</button>`;
-      }).join('')}</div>`;
-    typeText(val(ev.text, S));
-    return;
-  }
-  if (S.phase === 'result') {
-    const r = S.result;
-    el.innerHTML = `${header()}<h2>${r.title}</h2><div class="chosen">你选择了：${r.choice}</div>
-      <div class="story" id="story"></div>
-      <div id="choiceBox" class="choices" hidden>
-        <div class="deltas">${deltaTags(r.deltas)}</div>
-        <button class="btn center px" onclick="next()">▶ 继续</button></div>`;
-    typeText(r.text || '……');
-    return;
-  }
-  if (S.phase === 'plan') return renderPlan(el);
-  if (S.phase === 'ending') {
-    const e = ENDINGS[S.ending], u = unlocked();
-    el.innerHTML = `<div class="ending">
-      <span class="stage-label">THE END</span><br>
-      <span class="rarity px" style="background:${e.c}">${e.r}</span>
-      <h2>${e.t}</h2>
-      <div class="desc px">${esc(e.d(S))}</div>
-      <div class="summary">
-        <div>GPA ${S.a.gpa.toFixed(2)}</div><div>排名 ${rank(S)}/${N}</div><div>基础 ${S.a.kn}</div><div>英语 ${S.a.eng}</div>
-        <div>科研 ${S.a.sci}</div><div>竞赛 ${S.a.comp}</div><div>实习 ${S.a.intern}</div><div>心态 ${S.a.mood}</div>
-        <div>金币 ¥${S.coins}</div><div>加分 ${S.bonus.toFixed(1)}</div><div>决策 ${S.turns} 次</div><div>Offer ${S.offers.length} 个</div>
-      </div>
-      <p>已解锁结局：${u.length} / ${Object.keys(ENDINGS).length}</p>
-      <button class="btn center px" onclick="screen='pick';render()">★ 再来一局</button>
-      <button class="btn center px" onclick="showGallery()">◆ 结局图鉴</button></div>`;
-  }
-}
-
-function renderPlan(el) {
-  const mo = MONTHS[S.m], r = rank(S), dr = S.rankPrev - r;
-  let body = '';
-  if (tab === 'act') {
-    body = `<div class="grid">${ACTIONS.map(a => {
-      const ok = S.ap >= a.ap && (!a.cond || a.cond(S));
-      return `<button class="act px" ${ok ? '' : 'disabled'} onclick="doAction('${a.id}')"><span class="cost">${a.ap}行动点</span>
-        <b>${a.n}</b><p>${a.cond && !a.cond(S) ? '🔒' + a.lock : a.d}</p></button>`;
-    }).join('')}</div>`;
-  } else if (tab === 'social') {
-    body = `<div class="grid">${NPCS.map(n => {
-      const v = S.aff[n.id];
-      return `<div class="npc px"><div class="npc-top"><div class="npc-face px" style="background:${n.color}">${n.n[0]}</div>
-        <div><b>${n.n}</b> <span class="tag">${n.type}</span><div class="row"><span>好感</span><span>${v}</span></div></div></div>
-        ${bar(v, 0, 100, n.color)}<p>${n.d}</p>
-        ${n.perks.map(([th, t]) => `<div class="perk ${v >= th ? 'done' : ''}">${t}</div>`).join('')}
-        <div class="npc-btns"><button ${S.ap >= 1 ? '' : 'disabled'} onclick="social('${n.id}','chat')">聊天(1点)</button>
-        <button ${S.ap >= 1 && S.coins >= 80 ? '' : 'disabled'} onclick="social('${n.id}','treat')">请吃饭(1点 ¥80)</button></div></div>`;
-    }).join('')}</div>`;
-  } else {
-    body = `<p style="margin-top:0">"同学，保研是信息战！我们机构往届学员 98% 上岸！"——机构顾问<br><span style="font-size:13px">（不占行动点，但价格不菲）</span></p>` +
-      AGENCY.map(p => {
-        const owned = (S.f.agency || 0) >= p.lv;
-        const price = p.price - (p.lv === 2 && S.f.agency === 1 ? AGENCY[0].price : 0);
-        return `<div class="agency px"><b>${p.n}</b> <span class="price">¥${price}</span>${p.lv === 2 && S.f.agency === 1 ? '（已抵扣精修班费用）' : ''}
-          <div style="white-space:pre-wrap;font-size:14px">${p.perks}</div>
-          <button class="btn center px" ${owned || S.coins < price || S.m > 12 ? 'disabled' : ''} onclick="buyAgency(${p.lv})">${owned ? '已购买' : S.coins < price ? '金币不足' : '购买'}</button></div>`;
-      }).join('');
-  }
-  el.innerHTML = `${header()}<h2>${mo.n} · 月度计划</h2>
-    <div class="plan-head"><span class="ap">行动点 ${Array.from({ length: Math.max(mo.ap, S.ap) }, (_, i) => `<i class="${i < S.ap ? '' : 'off'}"></i>`).join('')}</span>
-      <span>金币 <b>¥${S.coins}</b></span>
-      <span>排名 <b>第 ${r} 名</b> <span class="${dr > 0 ? 'up' : dr < 0 ? 'down' : ''}">${dr > 0 ? '▲' + dr : dr < 0 ? '▼' + (-dr) : ''}</span></span>
-      <span>真题 <b>×${S.zhenti}</b></span></div>
-    <div class="tabs">
-      <button class="tab px ${tab === 'act' ? 'on' : ''}" onclick="tab='act';render()">行动</button>
-      <button class="tab px ${tab === 'social' ? 'on' : ''}" onclick="tab='social';render()">社交</button>
-      <button class="tab px ${tab === 'agency' ? 'on' : ''}" onclick="tab='agency';render()">保研机构</button>
-    </div>
-    ${body}
-    ${S.feed.length ? `<div class="feed">${S.feed.map(f => `<div>${esc(f.t)}<div class="deltas">${deltaTags(f.d)}</div></div>`).join('')}</div>` : ''}
-    <button class="btn center px" onclick="finishMonthClick()">${S.ap > 0 ? '结束本月 ▶' : '行动点用完了，进入下个月 ▶'}</button>`;
-}
-
-function renderLog() {
-  const el = $('logbox');
-  if (!S || screen !== 'game') { el.innerHTML = '<h3>▼ 人生日志</h3><div class="log-item">暂无记录</div>'; return; }
-  el.innerHTML = '<h3>▼ 人生日志</h3>' + S.log.map(l => `<div class="log-item"><span>[${l.st}]</span> ${esc(l.t)}</div>`).join('');
-}
-
-/* 打字机效果：点击文字可跳过 */
-let typer = null;
-function typeText(text) {
-  clearInterval(typer);
-  const el = $('story'), box = $('choiceBox');
-  let i = 0;
-  el.classList.add('cursor');
-  const done = () => { clearInterval(typer); typer = null; el.textContent = text; el.classList.remove('cursor'); box.hidden = false; };
-  el.onclick = done;
-  typer = setInterval(() => { i += 2; el.textContent = text.slice(0, i); if (i >= text.length) done(); }, 25);
-}
-
-function shake() { const m = $('main'); m.classList.remove('shake'); void m.offsetWidth; m.classList.add('shake'); }
-
-/* 像素小人：表情随心态变化 */
-function drawAvatar(mood) {
-  const cv = $('avatar'); if (!cv) return;
-  const ctx = cv.getContext('2d'), P = 8;
-  const face = mood >= 60
-    ? ['..ssmssmss..', '...ssmmss...']
-    : mood >= 30 ? ['..ssssssss..', '...ssmmss...'] : ['..sssmmsss..', '...smssms...'];
-  const map = [
-    '....hhhh....', '..hhhhhhhh..', '.hhhhhhhhhh.', '.hssssssssh.',
-    '..swwsswws..', '..sesssses..', face[0], face[1],
-    '....bbbb....', '..bbbyybbb..', '.sbbbyybbbs.', '.sbbbbbbbbs.',
-  ];
-  const col = { h: '#3a2c2c', s: '#f5c9a0', e: '#22223b', w: '#ffffff', m: '#c0392b', b: '#4d96ff', y: '#f9c74f' };
-  ctx.clearRect(0, 0, 96, 96);
-  map.forEach((row, y) => [...row].forEach((ch, x) => { if (col[ch]) { ctx.fillStyle = col[ch]; ctx.fillRect(x * P, y * P, P, P); } }));
-  if (mood < 30) { ctx.fillStyle = '#8ecae6'; ctx.fillRect(10 * P, 3 * P, P, P); ctx.fillRect(10 * P, 4 * P, P, P); }
-}
-
-/* 排名走势：柱子越高排名越靠前，虚线为推免线 */
-function drawRankChart() {
-  const cv = $('rankChart'); if (!cv) return;
-  const ctx = cv.getContext('2d'), W = cv.width, H = cv.height;
-  ctx.clearRect(0, 0, W, H);
-  const hist = [...S.rankHist.slice(0, -1), rank(S)];
-  const bw = Math.floor(W / MONTHS.length);
-  const yOf = r => Math.round((r - 1) / (N - 1) * (H - 4));
-  hist.forEach((r, i) => {
-    ctx.fillStyle = r <= QUOTA ? '#43aa8b' : '#e94560';
-    const y = yOf(r);
-    ctx.fillRect(i * bw + 1, y, bw - 3, H - y);
-  });
-  ctx.fillStyle = '#f9c74f';
-  const ly = yOf(QUOTA);
-  for (let x = 0; x < W; x += 8) ctx.fillRect(x, ly, 4, 2);
-}
-
-/* ============ 弹窗 / 菜单 ============ */
-function modal(html) { $('modalBody').innerHTML = html; $('modal').hidden = false; }
-function closeModal() { $('modal').hidden = true; }
-$('modal').onclick = e => { if (e.target.id === 'modal') closeModal(); };
-
-function showGallery() {
-  const u = unlocked();
-  modal(`<h2>结局图鉴（${u.length}/${Object.keys(ENDINGS).length}）</h2>
-    <div class="gallery">${Object.entries(ENDINGS).map(([id, e]) => u.includes(id)
-      ? `<div class="g-item px"><span class="tag" style="background:${e.c}">${e.r}</span> <b>${e.t}</b></div>`
-      : `<div class="g-item px lock"><span class="tag">?</span> <b>？？？</b></div>`).join('')}</div>
-    <button class="btn center px" onclick="closeModal()">关闭</button>`);
-}
-
-function showMenu() {
-  modal(`<h2>菜单</h2>
-    <button class="btn center px" onclick="closeModal();screen='title';render()">返回标题</button>
-    <button class="btn center px" onclick="if(confirm('确定放弃当前进度，重新开始吗？')){closeModal();screen='pick';render()}">重新开始</button>
-    <button class="btn center px" onclick="if(confirm('确定删除存档吗？结局图鉴会保留。')){S=null;save();closeModal();screen='title';render()}">删除存档</button>
-    <button class="btn center px" onclick="closeModal()">关闭</button>
-    <p style="font-size:13px">玩法：每月用行动点安排学习、科研、竞赛、兼职、实习和社交。<br>
-    排名 = GPA + 加分，同学们也在进步，不进则退。推免线为第 ${QUOTA} 名。<br>
-    学长学姐好感≥25 会在特定月份邀请你做项目，≥30 送保研真题。<br>
-    快捷键：数字键选择选项，空格 / 回车 继续。</p>`);
-}
-$('btnMenu').onclick = showMenu;
-$('btnGallery').onclick = showGallery;
-
-document.addEventListener('keydown', e => {
-  if (!$('modal').hidden || screen !== 'game' || !S || e.target.tagName === 'INPUT') return;
-  const box = $('choiceBox');
-  if (typer && (e.key === ' ' || e.key === 'Enter')) { $('story').onclick(); e.preventDefault(); return; }
-  if (!box || box.hidden) return;
-  if (S.phase === 'event' && /^[1-9]$/.test(e.key)) choose(+e.key - 1);
-  else if ((e.key === ' ' || e.key === 'Enter') && (S.phase === 'result' || S.phase === 'month')) {
-    e.preventDefault(); S.phase === 'result' ? next() : proceed();
-  }
-});
-
-render();
-</script>
+<script src="js/data.js"></script>
+<script src="js/core.js"></script>
+<script src="js/events.js"></script>
+<script src="js/random.js"></script>
+<script src="js/pixel.js"></script>
+<script src="js/ui.js"></script>
 </body>
 </html>
